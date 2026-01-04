@@ -1,0 +1,158 @@
+/* ===============================
+   BASE SETUP
+================================ */
+@import url("https://fonts.googleapis.com/css2?family=Sacramento&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap");
+.heading {
+  font-family: "Sacramento", cursive;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.n-left-vertical {
+  filter: blur(140px);
+  opacity: 0.95;
+  background: linear-gradient(#7fffd4 0%, #6a5acd 100%);
+  width: 55vmax;
+  height: 120vmax;
+  top: -5%;
+  left: 2%;
+}
+
+.n-right-vertical {
+  filter: blur(140px);
+  opacity: 0.95;
+  background: linear-gradient(#8fd3f4 0%, #00f2fe 100%);
+  width: 55vmax;
+  height: 120vmax;
+  top: -42%;
+  right: -3%;
+}
+/* ===============================
+   DIAGONAL STROKE ( \ )
+   THIS DEFINES THE "N"
+================================ */
+
+.n-diagonal-dark {
+  background: #050505;
+  width: 140vmax;
+  height: 32vmax;
+  top: 10%;
+  left: -20%;
+  transform: rotate(-25deg);
+  filter: blur(160px);
+  opacity: 0.85;
+}
+
+/* ===============================
+   AMBIENT DEPTH (SOFTEN EDGES)
+================================ */
+
+.n-ambient {
+  background: #0b0b0b;
+  width: 100vmax;
+  height: 100vmax;
+  top: 20%;
+  left: 25%;
+  filter: blur(180px);
+  opacity: 0.35;
+}
+
+/* ===============================
+   OVERLAY BLEND (MAGIC)
+================================ */
+
+.overlay-blend {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(0, 0, 0, 0.35)
+  );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* ===============================
+   FILM GRAIN / NOISE
+================================ */
+
+.noise-layer {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* ===============================
+   OPTIONAL: MOBILE OPTIMIZATION
+================================ */
+
+@media (max-width: 768px) {
+  .blob {
+    filter: blur(110px);
+  }
+
+  .n-diagonal-dark {
+    opacity: 0.7;
+  }
+}
+/* ===============================
+   SUBTLE DIAGONAL ZIG-ZAG MOTION
+================================ */
+
+@keyframes diagonalZigZag {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(-10%, -16%, 0);
+  }
+  50% {
+    transform: translate3d(10%, -20%, 0);
+  }
+  75% {
+    transform: translate3d(-15%, -35%, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* LEFT BLOB — slower, heavier feel */
+.n-left-vertical {
+  animation: diagonalZigZag 4s ease-in-out infinite;
+}
+
+/* RIGHT BLOB — slightly offset so motion isn’t mirrored */
+.n-right-vertical {
+  animation: diagonalZigZag 5s ease-in-out infinite;
+  animation-delay: -3s;
+}
+.cards {
+  background: radial-gradient(circle at 50% 100%, #12296a 0%, #020617 70%);
+  color: white;
+}
+.Profile {
+  min-height: 100%;
+  width: auto;
+}
+@media (max-width: 768px) {
+  .Profile {
+    max-height: 144px;
+    width: auto;
+  }
+}
+@media (min-width: 768px) and (max-width: 930px) {
+  .Profile {
+    max-height: 170px;
+    width: auto;
+  }
+}
