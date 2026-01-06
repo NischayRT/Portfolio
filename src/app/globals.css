@@ -79,25 +79,78 @@ p {
 }
 .shiny-silver {
   background: linear-gradient(
-    135deg,
-    #f5f5f5 0%,
-    #d9d9d9 20%,
-    #ffffff 40%,
-    #cfcfcf 60%,
-    #f0f0f0 80%,
-    #bfbfbf 100%
+    90deg,
+    #9a9a9a 0%,
+    #cfcfcf 20%,
+    #ffffff 35%,
+    #dcdcdc 50%,
+    #ffffff 65%,
+    #cfcfcf 80%,
+    #9a9a9a 100%
   );
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-.shiny-silver {
-  background-size: 200% auto;
-  animation: shine 3s linear infinite;
+
+  animation: shine-horizontal 3.5s linear infinite;
 }
 
-@keyframes shine {
-  to {
-    background-position: 200% center;
+/* Horizontal shimmer */
+@keyframes shine-horizontal {
+  from {
+    background-position: 0% center;
   }
+  to {
+    background-position: 300% center;
+  }
+}
+/* ===============================
+   SKILLS SECTION BACKGROUND
+================================ */
+
+.skill-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.skill-left {
+  /* Deep Indigo/Purple Gradient */
+  background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%);
+  width: 50vmax;
+  height: 50vmax;
+  top: -10%;
+  left: -10%;
+  animation: diagonalZigZag 10s ease-in-out infinite;
+}
+
+.skill-right {
+  /* Deep Blue/Cyan Gradient */
+  background: linear-gradient(135deg, #172554 0%, #0e7490 100%);
+  width: 45vmax;
+  height: 45vmax;
+  bottom: -10%;
+  right: -10%;
+  animation: diagonalZigZag 12s ease-in-out infinite;
+  animation-delay: -2s;
+}
+
+/* Optional: Add a subtle grid pattern overlay for a "tech" feel */
+.tech-grid {
+  background-size: 50px 50px;
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
 }
