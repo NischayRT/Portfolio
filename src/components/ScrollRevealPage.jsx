@@ -610,7 +610,9 @@ export default function ScrollRevealPage() {
                 <p className="text-gray-300 leading-relaxed text-sm md:text-base mb-6">
                   A detail-oriented computer science undergraduate looking for
                   an entry-level Software Engineer position in a fast-growing
-                  company.
+                  company to apply my expertise in software applications,
+                  development, design, and contribute to innovative projects
+                  that make tangible impacts.
                 </p>
                 <div className="group flex flex-wrap gap-3 mt-auto justify-center md:justify-start">
                   <SocialPill
@@ -870,7 +872,7 @@ export default function ScrollRevealPage() {
                     </div>
 
                     {/* Right Side: Floating Image Preview (Keep this as is) */}
-                    <div className="absolute top-1/2 -translate-y-1/2 -right-[15%] h-[120%] w-auto aspect-[9/16] z-50 pointer-events-none opacity-0 translate-x-10 scale-90 rotate-6 group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 group-hover:rotate-0 transition-all duration-500 ease-out hidden md:block">
+                    <div className="absolute top-1/2 -translate-y-1/2 -right-[15%] h-[120%] w-auto aspect-9/16 z-50 pointer-events-none opacity-0 translate-x-10 scale-90 rotate-6 group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 group-hover:rotate-0 transition-all duration-500 ease-out hidden md:block">
                       <Image
                         src={project.image}
                         alt={project.title}
