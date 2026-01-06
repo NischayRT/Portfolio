@@ -849,7 +849,7 @@ export default function ScrollRevealPage() {
 
                       <div className="mt-auto">
                         {/* Rest of the card content... */}
-                        <p className="text-gray-300 text-lg leading-relaxed font-light mb-8 group-hover:text-gray-700 transition-colors duration-300 line-clamp-2 md:truncate w-[80%]">
+                        <p className="text-gray-300 text-lg leading-relaxed font-light mb-8 group-hover:text-gray-700 transition-colors duration-300 line-clamp-2 w-[100%]">
                           {project.description}
                         </p>
 
