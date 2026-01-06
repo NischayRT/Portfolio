@@ -222,7 +222,7 @@ const PROJECTS_DATA = [
   {
     title: "Text Tone Picker",
     subtitle: "Tone and format changer",
-    link: "Text-Tone-Changer",
+    url: "https://text-tone-picker.netlify.app/", // Actual URL (Example)
     description:
       "Tone Picker Text Tool is an online app that utilizes the capabilities of Mistral AI to enable users to improve their writings.",
     tech: [SiNextdotjs, SiTailwindcss, SiVercel],
@@ -231,7 +231,7 @@ const PROJECTS_DATA = [
   {
     title: "Electrify Hyderabad",
     subtitle: "Electric cars exhibition page",
-    link: "Electrify-Hyderabad",
+    url: "https://electrify-hyd.com/", // Add actual URL here
     description:
       "Developed a quick and completely responsive promotional webpage using HTML and CSS for the CII Electric Car Exhibition.",
     tech: [SiHtml5, SiCss3, SiGoogle],
@@ -240,7 +240,7 @@ const PROJECTS_DATA = [
   {
     title: "SunnySide",
     subtitle: "A Weather App",
-    link: "SunnySide",
+    url: "https://weather-now-aganitha.netlify.app/", // Add actual URL here
     description:
       "Implemented with React and Vite, utilizing Open-Meteo API for real-time updates and graphical trends.",
     tech: [SiReact, SiVite, SiTailwindcss],
@@ -249,7 +249,7 @@ const PROJECTS_DATA = [
   {
     title: "Foodievery",
     subtitle: "A Food Delivery App",
-    link: "Foodievery",
+    url: "https://foodievery.netlify.app/", // Working URL
     description:
       "Developed a responsive web application for browsing restaurants, viewing menus, and online ordering.",
     tech: [SiReact, SiPostman, SiCss3],
@@ -398,7 +398,7 @@ export default function ScrollRevealPage() {
         left: "50%",
         xPercent: -50,
         yPercent: -50,
-        scale: 2,
+        scale: 1.5,
         autoAlpha: 1,
       });
       gsap.set(cards, { autoAlpha: 0, y: 100 });
@@ -416,7 +416,7 @@ export default function ScrollRevealPage() {
 
       tl.to(title, {
         top: "3.5rem",
-        left: "4rem",
+        left: "2rem",
         xPercent: 0,
         yPercent: 0,
         scale: 1,
@@ -479,7 +479,7 @@ export default function ScrollRevealPage() {
       // 1. Title Move
       tl.to(title, {
         top: "3.5rem",
-        left: "4rem",
+        left: "2rem",
         xPercent: 0,
         yPercent: 0,
         scale: 1,
@@ -572,8 +572,8 @@ export default function ScrollRevealPage() {
                 Nischay Reddy
               </h1>
               <div className="mt-4 flex justify-center gap-4 opacity-60">
-                <span className="h-px w-12 bg-white/50 self-center"></span>
-                <span className="h-px w-12 bg-white/50 self-center"></span>
+                <span className="h-px w-16 bg-white/50 self-center"></span>
+                <span className="h-px w-16 bg-white/50 self-center"></span>
               </div>
             </div>
           </div>
@@ -731,10 +731,11 @@ export default function ScrollRevealPage() {
               style={{
                 top: "50%",
                 left: "50%",
-                transform: "translate(-50%, -50%)",
+                transform: "translate(20%, -60%)",
               }}
             >
-              Work Experience
+              <div>My</div>
+              <div> Experience</div>
             </h2>
             <div
               ref={experienceContainerRef}
@@ -803,10 +804,11 @@ export default function ScrollRevealPage() {
               style={{
                 top: "50%",
                 left: "50%",
-                transform: "translate(-50%, -50%)",
+                transform: "translate(20%, -60%)",
               }}
             >
-              Featured Projects
+              <div>Featured</div>
+              <div> Projects</div>
             </h2>
 
             <div
@@ -819,21 +821,24 @@ export default function ScrollRevealPage() {
                   key={index}
                   className="relative flex-shrink-0 w-[85vw] md:w-[50vw] h-[60vh] mr-12 md:mr-16"
                 >
-                  {/* Card Container: Group for hover effects */}
                   <div className="group w-full h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-10 flex flex-col justify-between shadow-2xl transition-all duration-500 hover:bg-white hover:text-black overflow-visible relative">
                     {/* Left Side: Text Content */}
                     <div className="flex flex-col h-full z-10 relative pointer-events-none group-hover:pointer-events-auto">
+                      {/* --- CLICKABLE LINK UPDATED HERE --- */}
                       <div className="flex items-center justify-between mb-2">
-                        <div className="flex gap-2 items-center">
+                        <a
+                          href={project.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex gap-2 items-center cursor-pointer z-50 pointer-events-auto hover:opacity-70 transition-opacity"
+                        >
                           <ExternalLink
                             size={20}
                             className="text-blue-400 group-hover:text-blue-600 transition-colors"
                           />
-                          <span className="text-sm font-mono tracking-widest uppercase text-gray-400 group-hover:text-gray-600">
-                            {project.link}
-                          </span>
-                        </div>
+                        </a>
                       </div>
+                      {/* ----------------------------------- */}
 
                       <h3 className="text-3xl md:text-5xl font-bold text-white mb-2 group-hover:text-black transition-colors duration-300 leading-tight">
                         {project.title}
@@ -843,6 +848,7 @@ export default function ScrollRevealPage() {
                       </p>
 
                       <div className="mt-auto">
+                        {/* Rest of the card content... */}
                         <p className="text-gray-300 text-lg leading-relaxed font-light mb-8 group-hover:text-gray-700 transition-colors duration-300 line-clamp-2 md:truncate w-[80%]">
                           {project.description}
                         </p>
@@ -863,7 +869,7 @@ export default function ScrollRevealPage() {
                       </div>
                     </div>
 
-                    {/* Right Side: Floating Image Preview (Hover Reveal) */}
+                    {/* Right Side: Floating Image Preview (Keep this as is) */}
                     <div className="absolute top-1/2 -translate-y-1/2 -right-[15%] h-[120%] w-auto aspect-[9/16] z-50 pointer-events-none opacity-0 translate-x-10 scale-90 rotate-6 group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 group-hover:rotate-0 transition-all duration-500 ease-out hidden md:block">
                       <Image
                         src={project.image}
