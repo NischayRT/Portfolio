@@ -532,7 +532,7 @@ export default function ScrollRevealPage() {
         ref={topDoorRef}
         className="fixed top-0 left-0 w-full z-40 overflow-hidden will-change-transform"
         style={{
-          height: "46vh",
+          height: "45vh",
           marginTop: "5vh",
           transform: "translate3d(0, 0, 0)",
           contain: "layout style paint",

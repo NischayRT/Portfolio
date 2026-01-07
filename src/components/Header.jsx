@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import Image from "next/image"; // Import the Next.js Image component
-import logoDark from "../../assets/logo-dark.png"; // Import your local image
+import Image from "next/image";
+import logoDark from "../../assets/logo-dark.png";
 
 export default function Header() {
   return (
