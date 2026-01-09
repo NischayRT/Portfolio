@@ -640,7 +640,7 @@ export default function ScrollRevealPage() {
 
             <div
               ref={profileCardRef}
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl px-4 md:px-16"
+              className="absolute top-1/2 pb-10 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl px-4 md:px-16"
             >
               <div className="bg-white/5 backdrop-blur-md w-full border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start hover:bg-white/10 transition-colors duration-500 shadow-2xl">
                 <div className="relative flex-shrink-0">
@@ -707,7 +707,7 @@ export default function ScrollRevealPage() {
           <div className="noise-layer opacity-30" />
         </div>
         {/* Content Wrapper */}
-        <div className="relative z-10">
+        <div className="relative z-10 -mt-[70vh]">
           {/* 1. SKILLS */}
           <div className="min-h-screen flex items-center justify-center px-4">
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 w-full max-w-6xl rounded-3xl p-8 md:p-12 flex flex-col md:flex-row gap-12 items-stretch shadow-2xl">
