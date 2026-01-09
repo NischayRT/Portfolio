@@ -14,7 +14,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import profilePic from "../../assets/Profile.webp";
 
-// --- PROJECT IMAGES IMPORTS (Ensure these paths are correct) ---
+// --- PROJECT IMAGES IMPORTS ---
 import image1 from "../../assets/image1.webp";
 import image2 from "../../assets/image2.webp";
 import image3 from "../../assets/image3.webp";
@@ -190,7 +190,6 @@ const EXPERIENCE_DATA = [
       "Created and updated SEO-optimized WordPress blog pages, including slug and metadata management.",
       "Integrated Google Sheets API and PHP backend for automated lead collection processes.",
       "Optimized performance to achieve 80%+ scores on PageSpeed Insights.",
-      "Applied UI/UX enhancements to improve user retention.",
     ],
   },
   {
@@ -213,7 +212,6 @@ const EXPERIENCE_DATA = [
       "Revamped the company blog interface with a fully responsive design.",
       "Incorporated social media integration and developed a dynamic search bar.",
       "Enhanced page usability leading to 30% quicker navigation.",
-      "Collaborated effectively on the project version control through GitHub.",
     ],
   },
 ];
@@ -222,7 +220,7 @@ const PROJECTS_DATA = [
   {
     title: "Text Tone Picker",
     subtitle: "Tone and format changer",
-    url: "https://text-tone-picker.netlify.app/", // Actual URL (Example)
+    url: "https://text-tone-picker.netlify.app/",
     description:
       "Tone Picker Text Tool is an online app that utilizes the capabilities of Mistral AI to enable users to improve their writings.",
     tech: [SiNextdotjs, SiTailwindcss, SiVercel],
@@ -231,7 +229,7 @@ const PROJECTS_DATA = [
   {
     title: "Electrify Hyderabad",
     subtitle: "Electric cars exhibition page",
-    url: "https://electrify-hyd.com/", // Add actual URL here
+    url: "https://electrify-hyd.com/",
     description:
       "Developed a quick and completely responsive promotional webpage using HTML and CSS for the CII Electric Car Exhibition.",
     tech: [SiHtml5, SiCss3, SiGoogle],
@@ -240,7 +238,7 @@ const PROJECTS_DATA = [
   {
     title: "SunnySide",
     subtitle: "A Weather App",
-    url: "https://weather-now-aganitha.netlify.app/", // Add actual URL here
+    url: "https://weather-now-aganitha.netlify.app/",
     description:
       "Implemented with React and Vite, utilizing Open-Meteo API for real-time updates and graphical trends.",
     tech: [SiReact, SiVite, SiTailwindcss],
@@ -249,7 +247,7 @@ const PROJECTS_DATA = [
   {
     title: "Foodievery",
     subtitle: "A Food Delivery App",
-    url: "https://foodievery.netlify.app/", // Working URL
+    url: "https://foodievery.netlify.app/",
     description:
       "Developed a responsive web application for browsing restaurants, viewing menus, and online ordering.",
     tech: [SiReact, SiPostman, SiCss3],
@@ -297,9 +295,12 @@ const SocialPill = React.memo(({ icon: Icon, label, link, color }) => (
 SocialPill.displayName = "SocialPill";
 
 export default function ScrollRevealPage() {
-  const topDoorRef = useRef(null);
-  const bottomDoorRef = useRef(null);
-  const contentRef = useRef(null);
+  // Entry Refs
+  const heroWrapperRef = useRef(null); // Ref for the taller container
+  const entryRef = useRef(null);
+  const titleTopRef = useRef(null);
+  const titleBottomRef = useRef(null);
+  const profileCardRef = useRef(null);
   const featuredSkillRef = useRef(null);
 
   // Experience Refs
@@ -312,7 +313,6 @@ export default function ScrollRevealPage() {
   const projectsContainerRef = useRef(null);
   const projectsTitleRef = useRef(null);
 
-  const scrollData = useRef({ current: 0, target: 0 });
   const [greeting, setGreeting] = useState("");
   const [activeSkill, setActiveSkill] = useState(null);
 
@@ -329,178 +329,248 @@ export default function ScrollRevealPage() {
     setGreeting(calculateGreeting);
   }, [calculateGreeting]);
 
-  // Entry Animation
-  useEffect(() => {
-    let requestID;
-    let ticking = false;
-    const updateTransforms = () => {
-      const p = scrollData.current.current;
-      const splitDistance = p * 55;
-      const contentScale = 0.9 + p * 0.1;
-      const contentOpacity = Math.max(0, (p - 0.2) * 2);
-      const contentY = (1 - p) * 100;
+  // --- 1. HERO / ENTRY ANIMATION ---
+  // --- 1. HERO / ENTRY ANIMATION ---
+  useLayoutEffect(() => {
+    const mm = gsap.matchMedia();
 
-      if (topDoorRef.current)
-        topDoorRef.current.style.transform = `translate3d(0, -${splitDistance}vh, 0)`;
-      if (bottomDoorRef.current)
-        bottomDoorRef.current.style.transform = `translate3d(0, ${splitDistance}vh, 0)`;
-      if (contentRef.current) {
-        contentRef.current.style.opacity = contentOpacity;
-        contentRef.current.style.transform = `scale(${contentScale}) translate3d(0, ${contentY}px, 0)`;
-      }
-      ticking = false;
-    };
-    const animate = () => {
-      const viewportHeight = window.innerHeight;
-      const rawProgress = window.scrollY / viewportHeight;
-      scrollData.current.target = Math.max(0, Math.min(rawProgress, 1));
-      scrollData.current.current +=
-        (scrollData.current.target - scrollData.current.current) * 0.5;
-      if (!ticking) {
-        ticking = true;
-        updateTransforms();
-      }
-      requestID = requestAnimationFrame(animate);
-    };
-    animate();
-    return () => {
-      if (requestID) cancelAnimationFrame(requestID);
-    };
+    mm.add("(min-width: 320px)", () => {
+      const ctx = gsap.context(() => {
+        // Initial States - Titles visible, card hidden
+        gsap.set([titleTopRef.current, titleBottomRef.current], {
+          opacity: 1,
+          y: 0,
+        });
+        gsap.set(profileCardRef.current, {
+          opacity: 0,
+          scale: 0.8,
+        });
+
+        // Create timeline with scroll trigger
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: heroWrapperRef.current,
+            start: "top top",
+            end: "80% center",
+            scrub: 1.2,
+            pin: false,
+          },
+        });
+
+        // Split animation - titles move apart vertically and fade
+        tl.to(
+          titleTopRef.current,
+          {
+            y: -250, // Move up
+            opacity: 0,
+            duration: 1,
+            ease: "power2.in",
+          },
+          0
+        )
+          .to(
+            titleBottomRef.current,
+            {
+              y: 250, // Move down
+              opacity: 0,
+              duration: 1,
+              ease: "power2.in",
+            },
+            0
+          )
+          // Profile card fades in from center
+          .to(
+            profileCardRef.current,
+            {
+              opacity: 1,
+              scale: 1,
+              duration: 1.5,
+              ease: "power2.out",
+            },
+            0.4
+          );
+      }, heroWrapperRef);
+      return () => ctx.revert();
+    });
+
+    return () => mm.revert();
   }, []);
 
-  // Skill Icon Animation
+  // --- 2. SKILL ANIMATION ---
   useEffect(() => {
     if (activeSkill && featuredSkillRef.current) {
-      gsap.killTweensOf(featuredSkillRef.current);
       gsap.fromTo(
         featuredSkillRef.current,
-        { opacity: 0, y: 15, scale: 0.95 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "back.out(1.7)" }
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.3, ease: "power1.out" }
       );
     }
   }, [activeSkill]);
 
-  // --- EXPERIENCE SECTION ANIMATION ---
+  // --- 3. EXPERIENCE SECTION (HORIZONTAL SCROLL) ---
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const wrapper = experienceWrapperRef.current;
-      const races = experienceContainerRef.current;
+      const container = experienceContainerRef.current;
       const title = experienceTitleRef.current;
-      const cards = gsap.utils.toArray(races.children);
+      const cards = gsap.utils
+        .toArray(container.children)
+        .filter((child) => !child.classList.contains("w-[10vw]"));
 
       function getScrollAmount() {
-        let racesWidth = races.scrollWidth;
-        return -(racesWidth - window.innerWidth);
+        return -(container.scrollWidth - window.innerWidth);
       }
 
+      // Initial Title Position (Centered)
       gsap.set(title, {
+        position: "absolute",
         top: "50%",
         left: "50%",
         xPercent: -50,
         yPercent: -50,
         scale: 1.5,
-        autoAlpha: 1,
+        opacity: 1,
+        zIndex: 50,
       });
-      gsap.set(cards, { autoAlpha: 0, y: 100 });
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: wrapper,
-          start: "top top",
-          end: () => `+=${Math.abs(getScrollAmount()) + window.innerHeight}`,
-          pin: true,
-          scrub: 1,
-          invalidateOnRefresh: true,
+      gsap.set(cards, { opacity: 0, y: 50 });
+
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          isMobile: "(max-width: 767px)",
+          isDesktop: "(min-width: 768px)",
         },
-      });
+        (context) => {
+          const { isMobile } = context.conditions;
 
-      tl.to(title, {
-        top: "3.5rem",
-        left: "2rem",
-        xPercent: 0,
-        yPercent: 0,
-        scale: 1,
-        duration: 1,
-        ease: "power2.inOut",
-      })
-        .to(cards, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.5,
-          stagger: 0.1,
-          ease: "power2.out",
-        })
-        .to(races, {
-          x: () => getScrollAmount(),
-          duration: 3,
-          ease: "none",
-        });
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: wrapper,
+              start: "top top",
+              end: () =>
+                `+=${Math.abs(getScrollAmount()) + window.innerHeight}`,
+              pin: true,
+              scrub: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          // Title Animation - Adjusted to be 20px higher
+          tl.to(title, {
+            // Mobile: calc(10% - 20px), Desktop: 2rem (approx 32px, vs previous 3.5rem/56px)
+            top: isMobile ? "calc(10% - 20px)" : "2rem",
+            left: isMobile ? "50%" : "2rem",
+            xPercent: isMobile ? -50 : 0,
+            yPercent: 0,
+            scale: 1,
+            duration: 0.5,
+            ease: "power2.inOut",
+          })
+            .to(
+              cards,
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: "power2.out",
+              },
+              "-=0.25"
+            )
+            .to(container, {
+              x: getScrollAmount,
+              duration: 3,
+              ease: "none",
+            });
+        }
+      );
     }, experienceWrapperRef);
+
     return () => ctx.revert();
   }, []);
 
-  // --- PROJECTS SECTION ANIMATION (NEW) ---
+  // --- 4. PROJECTS SECTION (HORIZONTAL SCROLL) ---
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const wrapper = projectsWrapperRef.current;
-      const races = projectsContainerRef.current;
+      const container = projectsContainerRef.current;
       const title = projectsTitleRef.current;
-
-      // Select direct children (cards)
-      const cards = gsap.utils.toArray(races.children);
+      const cards = gsap.utils
+        .toArray(container.children)
+        .filter((child) => !child.classList.contains("w-[10vw]"));
 
       function getScrollAmount() {
-        let racesWidth = races.scrollWidth;
-        return -(racesWidth - window.innerWidth);
+        return -(container.scrollWidth - window.innerWidth);
       }
 
-      // Initial States
       gsap.set(title, {
+        position: "absolute",
         top: "50%",
         left: "50%",
         xPercent: -50,
         yPercent: -50,
-        scale: 2,
-        autoAlpha: 1,
+        scale: 1.5,
+        opacity: 1,
+        zIndex: 50,
       });
-      gsap.set(cards, { autoAlpha: 0, y: 100 });
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: wrapper,
-          start: "top top",
-          end: () => `+=${Math.abs(getScrollAmount()) + window.innerHeight}`,
-          pin: true,
-          scrub: 1,
-          invalidateOnRefresh: true,
+      gsap.set(cards, { opacity: 0, y: 50 });
+
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          isMobile: "(max-width: 767px)",
+          isDesktop: "(min-width: 768px)",
         },
-      });
+        (context) => {
+          const { isMobile } = context.conditions;
 
-      // 1. Title Move
-      tl.to(title, {
-        top: "3.5rem",
-        left: "2rem",
-        xPercent: 0,
-        yPercent: 0,
-        scale: 1,
-        duration: 1,
-        ease: "power2.inOut",
-      })
-        // 2. Cards Fade In
-        .to(cards, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.5,
-          stagger: 0.1,
-          ease: "power2.out",
-        })
-        // 3. Horizontal Scroll
-        .to(races, {
-          x: () => getScrollAmount(),
-          duration: 3,
-          ease: "none",
-        });
-    }, projectsWrapperRef); // Scope to projects wrapper
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: wrapper,
+              start: "top top",
+              end: () =>
+                `+=${Math.abs(getScrollAmount()) + window.innerHeight}`,
+              pin: true,
+              scrub: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          // Title Animation - Adjusted to be 20px higher
+          tl.to(title, {
+            // Mobile: calc(10% - 20px), Desktop: 2rem
+            top: isMobile ? "calc(10% - 20px)" : "2rem",
+            left: isMobile ? "50%" : "2rem",
+            xPercent: isMobile ? -50 : 0,
+            yPercent: 0,
+            scale: 1,
+            duration: 0.5,
+            ease: "power2.inOut",
+          })
+            .to(
+              cards,
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: "power2.out",
+              },
+              "-=0.25"
+            )
+            .to(container, {
+              x: getScrollAmount,
+              duration: 3,
+              ease: "none",
+            });
+        }
+      );
+    }, projectsWrapperRef);
+
     return () => ctx.revert();
   }, []);
 
@@ -508,137 +578,116 @@ export default function ScrollRevealPage() {
   const handleSkillLeave = useCallback(() => setActiveSkill(null), []);
 
   return (
-    <div className="relative bg-black min-h-screen">
+    <div className="relative bg-black min-h-screen selection:bg-blue-500/30">
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 5px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: rgba(255, 255, 255, 0.02);
-          margin-top: 10px;
-          margin-bottom: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
           background: rgba(255, 255, 255, 0.15);
           border-radius: 10px;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.3);
-        }
       `}</style>
 
-      {/* --- ENTRY DOOR SECTIONS (Keep code same) --- */}
-      <div
-        ref={topDoorRef}
-        className="fixed top-0 left-0 w-full z-40 overflow-hidden will-change-transform"
-        style={{
-          height: "45vh",
-          marginTop: "5vh",
-          transform: "translate3d(0, 0, 0)",
-          contain: "layout style paint",
-        }}
-      >
-        <div className="absolute inset-0 flex items-end justify-center px-4 md:px-16 pb-0">
-          <div className="home-1 home flex flex-col items-center justify-end pb-2 relative overflow-hidden w-full max-w-7xl">
-            <div className="absolute bottom-0 w-[60%] h-75 bg-blue-500/20 blur-[100px] rounded-full pointer-events-none" />
-            <div className="relative z-10 text-center mb-2">
-              <p className="text-transparent bg-clip-text bg-gradient-to-br from-pink-500 via-orange-300 to-orange-600 text-sm font-bold tracking-[0.3em] italic uppercase mb-4 min-h-5 special-heading animate-pulse">
+      {/* ===========================================
+        SECTION 1: HERO (STICKY BEHIND CURTAIN) 
+        ===========================================
+        ADDED: Wrapper with h-[140vh]. 
+        This provides a scroll track longer than the screen height.
+        The inner content sticks for 100vh, but the extra 40vh 
+        ensures the profile card stays visible before Section 2 overlaps.
+      */}
+      <div ref={heroWrapperRef} className="relative h-[200vh] w-full">
+        <div
+          ref={entryRef}
+          className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden z-0"
+        >
+          {/* Background Effects */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none">
+            <div className="blob n-left-vertical" />
+            <div className="blob n-right-vertical" />
+            <div className="blob n-diagonal-dark" />
+            <div className="blob n-ambient" />
+            <div className="overlay-blend" />
+            <div className="noise-layer opacity-40" />
+          </div>
+
+          {/* Content */}
+          <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 md:px-16">
+            <div
+              ref={titleTopRef}
+              className="absolute top-[20%] md:top-[25%] text-center"
+            >
+              <p className="text-transparent bg-clip-text bg-gradient-to-br from-pink-500 via-orange-300 to-orange-600 text-sm font-bold tracking-[0.3em] italic uppercase mb-4 special-heading animate-pulse">
                 {greeting}
               </p>
-              <h1 className="text-5xl md:text-7xl font-sans font-thin leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-blue-300 opacity-90">
+              <h1 className="text-4xl md:text-5xl lg:text-7xl font-sans font-thin leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-blue-300 opacity-90">
                 MY NAME IS
               </h1>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div
-        ref={bottomDoorRef}
-        className="fixed bottom-0 left-0 w-full z-40 overflow-hidden will-change-transform"
-        style={{
-          height: "45vh",
-          marginBottom: "5vh",
-          paddingBottom: "10px",
-          transform: "translate3d(0, 0, 0)",
-          contain: "layout style paint",
-        }}
-      >
-        <div className="absolute inset-0 flex items-start justify-center px-4 md:px-16 pt-0">
-          <div className="home home-2 flex flex-col items-center justify-start pt-2 relative overflow-hidden w-full max-w-7xl">
-            <div className="absolute top-0 w-[60%] h-75 bg-indigo-500/20 blur-[100px] rounded-full pointer-events-none" />
-            <div className="relative z-10 text-center">
-              <h1 className="heading text-7xl md:text-8xl mt-0 leading-tight drop-shadow-2xl pt-2 pb-6 shiny-silver">
+            <div
+              ref={titleBottomRef}
+              className="absolute bottom-[40%] md:bottom-[25%] text-center"
+            >
+              <h1 className="heading text-5xl md:text-7xl lg:text-8xl leading-tight drop-shadow-2xl shiny-silver p-4">
                 Nischay Reddy
               </h1>
-              <div className="mt-4 flex justify-center gap-4 opacity-60">
-                <span className="h-px w-16 bg-white/50 self-center"></span>
-                <span className="h-px w-16 bg-white/50 self-center"></span>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="fixed inset-0 h-[120vh] w-full z-10 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="blob n-left-vertical" />{" "}
-          <div className="blob n-right-vertical" />{" "}
-          <div className="blob n-diagonal-dark" />{" "}
-          <div className="blob n-ambient" /> <div className="overlay-blend" />{" "}
-          <div className="noise-layer opacity-40" />
-        </div>
-        <div
-          ref={contentRef}
-          className="relative z-20 flex items-center justify-center h-full pointer-events-auto flex-col pb-40 px-4 md:px-16 will-change-transform"
-          style={{ opacity: 0 }}
-        >
-          <div className="w-full flex justify-center mt-12 md:mt-0">
-            <div className="md:col-span-8 bg-white/5 backdrop-blur-md w-full max-w-7xl border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center md:items-start group hover:bg-white/10 transition-colors duration-500">
-              <div className="relative shrink-0">
-                <Image
-                  src={profilePic}
-                  alt="Nischay Reddy"
-                  priority={true}
-                  className="relative object-cover Profile rounded-2xl shadow-2xl ring-2 ring-white/20"
-                />
-              </div>
-              <div className="flex flex-col justify-center h-full w-full">
-                <h3 className="text-2xl font-bold text-white mb-3">
-                  Entry Level Software Engineer
-                </h3>
-                <p className="text-gray-300 leading-relaxed text-sm md:text-base mb-6">
-                  A detail-oriented computer science undergraduate looking for
-                  an entry-level Software Engineer position in a fast-growing
-                  company to apply my expertise in software applications,
-                  development, design, and contribute to innovative projects
-                  that make tangible impacts.
-                </p>
-                <div className="group flex flex-wrap gap-3 mt-auto justify-center md:justify-start">
-                  <SocialPill
-                    icon={Linkedin}
-                    label="LinkedIn"
-                    link="https://www.linkedin.com/in/nischayrt/"
-                    color="#0077B5"
+            <div
+              ref={profileCardRef}
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl px-4 md:px-16"
+            >
+              <div className="bg-white/5 backdrop-blur-md w-full border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start hover:bg-white/10 transition-colors duration-500 shadow-2xl">
+                <div className="relative flex-shrink-0">
+                  <Image
+                    src={profilePic}
+                    alt="Nischay Reddy"
+                    priority={true}
+                    className="Profile rounded-2xl shadow-2xl ring-2 ring-white/20"
                   />
-                  <SocialPill
-                    icon={Github}
-                    label="GitHub"
-                    link="https://github.com/NischayRT"
-                    color="#111111"
-                  />
-                  <SocialPill
-                    icon={LeetCodeIcon}
-                    label="LeetCode"
-                    link="https://leetcode.com/u/user0322sl/"
-                    color="#FFA116"
-                  />
-                  <SocialPill
-                    icon={CodeChefIcon}
-                    label="CodeChef"
-                    link="https://www.codechef.com/users/nischayreddy"
-                    color="#5B4638"
-                  />
+                </div>
+                <div className="flex flex-col justify-center w-full">
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+                    Entry Level Software Engineer
+                  </h3>
+                  <p className="text-gray-300 leading-relaxed text-sm md:text-base mb-6">
+                    A detail-oriented computer science undergraduate looking for
+                    an entry-level Software Engineer position in a fast-growing
+                    company to apply my expertise in software applications,
+                    development, design, and contribute to innovative projects
+                    that make tangible impacts.
+                  </p>
+                  <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                    <SocialPill
+                      icon={Linkedin}
+                      label="LinkedIn"
+                      link="https://www.linkedin.com/in/nischayrt/"
+                      color="#0077B5"
+                    />
+                    <SocialPill
+                      icon={Github}
+                      label="GitHub"
+                      link="https://github.com/NischayRT"
+                      color="#111111"
+                    />
+                    <SocialPill
+                      icon={LeetCodeIcon}
+                      label="LeetCode"
+                      link="https://leetcode.com/u/user0322sl/"
+                      color="#FFA116"
+                    />
+                    <SocialPill
+                      icon={CodeChefIcon}
+                      label="CodeChef"
+                      link="https://www.codechef.com/users/nischayreddy"
+                      color="#5B4638"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -646,22 +695,21 @@ export default function ScrollRevealPage() {
         </div>
       </div>
 
-      <div className="h-[240vh]"></div>
-
-      {/* =========================================================
-          UNIFIED SECTION: SKILLS + EXPERIENCE + PROJECTS
-      ========================================================= */}
-      <section className="relative z-40 bg-black min-h-screen">
+      {/* ===========================================
+        SECTION 2: CONTENT (SCROLLS OVER HERO) 
+        ===========================================
+      */}
+      <section className="relative z-40 bg-black min-h-screen border-t border-white/10 box-shadow-2xl">
         <div className="sticky top-0 w-full h-screen overflow-hidden pointer-events-none">
-          <div className="skill-blob skill-left" />{" "}
-          <div className="skill-blob skill-right" />{" "}
-          <div className="tech-grid" />{" "}
+          <div className="skill-blob skill-left" />
+          <div className="skill-blob skill-right" />
+          <div className="tech-grid" />
           <div className="noise-layer opacity-30" />
         </div>
-
-        <div className="relative z-10 -mt-[100vh]">
-          {/* 1. SKILLS CONTENT */}
-          <div className="min-h-screen flex items-center justify-center py-20 px-4">
+        {/* Content Wrapper */}
+        <div className="relative z-10">
+          {/* 1. SKILLS */}
+          <div className="min-h-screen flex items-center justify-center px-4">
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 w-full max-w-6xl rounded-3xl p-8 md:p-12 flex flex-col md:flex-row gap-12 items-stretch shadow-2xl">
               <div className="w-full md:w-1/3 flex flex-col justify-center relative min-h-[300px] border-b md:border-b-0 md:border-r border-white/10 pt-8 md:pt-0 pr-0 md:pr-12">
                 {activeSkill ? (
@@ -722,22 +770,17 @@ export default function ScrollRevealPage() {
             </div>
           </div>
 
-          {/* 2. EXPERIENCE CONTENT (SCROLLABLE) */}
+          {/* 2. EXPERIENCE */}
           <div
             ref={experienceWrapperRef}
             className="h-screen overflow-hidden flex flex-col justify-center relative"
           >
             <h2
               ref={experienceTitleRef}
-              className="absolute z-50 text-3xl md:text-4xl text-white opacity-0 drop-shadow-xl shiny-silver whitespace-nowrap"
-              style={{
-                top: "50%",
-                left: "50%",
-                transform: "translate(20%, -60%)",
-              }}
+              className="absolute text-3xl md:text-4xl text-white opacity-0 drop-shadow-xl shiny-silver whitespace-nowrap z-50 pointer-events-none"
             >
-              <div>My</div>
-              <div> Experience</div>
+              <div>My </div>
+              <div>Experience</div>
             </h2>
             <div
               ref={experienceContainerRef}
@@ -747,15 +790,15 @@ export default function ScrollRevealPage() {
               {EXPERIENCE_DATA.map((exp, index) => (
                 <div
                   key={index}
-                  className="relative flex-shrink-0 w-[90vw] md:w-[60vw] lg:w-[45vw] h-[70vh] mr-12 md:mr-24"
+                  className="relative flex-shrink-0 w-[90vw] md:w-[60vw] lg:w-[45vw] h-[65vh] mr-8 md:mr-24"
                 >
-                  <div className="w-full h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 flex flex-col shadow-2xl transition-transform duration-300 hover:scale-[1.02] group overflow-hidden">
-                    <div className="flex-shrink-0 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/10 z-10 bg-transparent">
+                  <div className="w-full h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-12 flex flex-col shadow-2xl transition-transform duration-300 hover:scale-[1.02] group overflow-hidden">
+                    <div className="flex-shrink-0 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 pb-4 border-b border-white/10 z-10 bg-transparent">
                       <div>
-                        <h3 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                        <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">
                           {exp.company}
                         </h3>
-                        <p className="text-xl text-blue-300 font-medium flex items-center gap-2">
+                        <p className="text-lg md:text-xl text-blue-300 font-medium flex items-center gap-2">
                           <Briefcase size={18} /> {exp.role}
                         </p>
                       </div>
@@ -772,11 +815,11 @@ export default function ScrollRevealPage() {
                       </div>
                     </div>
                     <div className="flex-grow overflow-y-auto custom-scrollbar pr-2 relative z-10">
-                      <ul className="space-y-4 pb-20">
+                      <ul className="space-y-4 pb-12">
                         {exp.description.map((point, i) => (
                           <li
                             key={i}
-                            className="flex items-start gap-3 text-gray-300 leading-relaxed font-light"
+                            className="flex items-start gap-3 text-gray-300 leading-relaxed font-light text-sm md:text-base"
                           >
                             <span className="mt-2 min-w-[6px] min-h-[6px] rounded-full bg-blue-500/80 shadow-[0_0_10px_rgba(59,130,246,0.6)]" />
                             <span>{point}</span>
@@ -784,7 +827,7 @@ export default function ScrollRevealPage() {
                         ))}
                       </ul>
                     </div>
-                    <div className="absolute bottom-4 right-6 text-9xl font-bold text-white/5 select-none pointer-events-none font-serif z-0">
+                    <div className="absolute bottom-4 right-6 text-8xl md:text-9xl font-bold text-white/5 select-none pointer-events-none font-serif z-0">
                       0{index + 1}
                     </div>
                   </div>
@@ -794,25 +837,17 @@ export default function ScrollRevealPage() {
             </div>
           </div>
 
-          {/* 3. PROJECTS CONTENT (NEW SCROLLABLE SECTION) */}
+          {/* 3. PROJECTS */}
           <div
             ref={projectsWrapperRef}
             className="h-screen overflow-hidden flex flex-col justify-center relative"
           >
-            {/* Project Title (Animated) */}
             <h2
               ref={projectsTitleRef}
-              className="absolute z-50 text-3xl md:text-4xl text-white opacity-0 drop-shadow-xl shiny-silver whitespace-nowrap"
-              style={{
-                top: "50%",
-                left: "50%",
-                transform: "translate(20%, -60%)",
-              }}
+              className="absolute text-3xl md:text-4xl text-white opacity-0 drop-shadow-xl shiny-silver whitespace-nowrap z-50 pointer-events-none"
             >
-              <div>Featured</div>
-              <div> Projects</div>
+              <div>Featured</div> <div>Projects</div>
             </h2>
-
             <div
               ref={projectsContainerRef}
               className="h-full flex flex-nowrap items-center pl-[5vw] md:pl-[10vw] pr-[20vw]"
@@ -821,12 +856,10 @@ export default function ScrollRevealPage() {
               {PROJECTS_DATA.map((project, index) => (
                 <div
                   key={index}
-                  className="relative flex-shrink-0 w-[85vw] md:w-[50vw] h-[60vh] mr-12 md:mr-16"
+                  className="relative flex-shrink-0 w-[90vw] md:w-[50vw] h-[60vh] mr-8 md:mr-16"
                 >
-                  <div className="group w-full h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-10 flex flex-col justify-between shadow-2xl transition-all duration-500 hover:bg-white hover:text-black overflow-visible relative">
-                    {/* Left Side: Text Content */}
+                  <div className="group w-full h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 md:pt-4 flex flex-col justify-between shadow-2xl transition-all duration-500 hover:bg-white hover:text-black overflow-hidden relative">
                     <div className="flex flex-col h-full z-10 relative pointer-events-none group-hover:pointer-events-auto">
-                      {/* --- CLICKABLE LINK UPDATED HERE --- */}
                       <div className="flex items-center justify-between mb-2">
                         <a
                           href={project.url}
@@ -840,29 +873,24 @@ export default function ScrollRevealPage() {
                           />
                         </a>
                       </div>
-                      {/* ----------------------------------- */}
-
-                      <h3 className="text-3xl md:text-5xl font-bold text-white mb-2 group-hover:text-black transition-colors duration-300 leading-tight">
+                      <h3 className="text-2xl md:text-5xl font-bold text-white mb-2 group-hover:text-black transition-colors duration-300 leading-tight">
                         {project.title}
                       </h3>
-                      <p className="text-lg text-blue-300 font-medium mb-6 group-hover:text-blue-600 transition-colors duration-300">
+                      <p className="text-base md:text-lg text-blue-300 font-medium mb-4 md:mb-6 group-hover:text-blue-600 transition-colors duration-300">
                         {project.subtitle}
                       </p>
-
                       <div className="mt-auto">
-                        {/* Rest of the card content... */}
-                        <p className="text-gray-300 text-lg leading-relaxed font-light mb-8 group-hover:text-gray-700 transition-colors duration-300 line-clamp-2 w-[100%]">
+                        <p className="text-gray-300 text-sm md:text-lg leading-relaxed font-light mb-6 md:mb-8 group-hover:text-gray-700 transition-colors duration-300 line-clamp-3 md:line-clamp-2 w-[100%]">
                           {project.description}
                         </p>
-
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-wrap gap-2 md:gap-3">
                           {project.tech.map((TechIcon, i) => (
                             <div
                               key={i}
-                              className="p-3 rounded-xl bg-white/10 border border-white/10 group-hover:bg-gray-100 group-hover:border-gray-200 transition-colors duration-300"
+                              className="p-2 md:p-3 rounded-xl bg-white/10 border border-white/10 group-hover:bg-gray-100 group-hover:border-gray-200 transition-colors duration-300"
                             >
                               <TechIcon
-                                size={24}
+                                size={20}
                                 className="text-white group-hover:text-black transition-colors duration-300"
                               />
                             </div>
@@ -870,8 +898,7 @@ export default function ScrollRevealPage() {
                         </div>
                       </div>
                     </div>
-
-                    {/* Right Side: Floating Image Preview (Keep this as is) */}
+                    {/* Image Preview (Desktop Only) */}
                     <div className="absolute top-1/2 -translate-y-1/2 -right-[15%] h-[120%] w-auto aspect-9/16 z-50 pointer-events-none opacity-0 translate-x-10 scale-90 rotate-6 group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 group-hover:rotate-0 transition-all duration-500 ease-out hidden md:block">
                       <Image
                         src={project.image}
