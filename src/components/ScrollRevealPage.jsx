@@ -858,7 +858,7 @@ export default function ScrollRevealPage() {
                   key={index}
                   className="relative flex-shrink-0 w-[90vw] md:w-[50vw] h-[60vh] mr-8 md:mr-16"
                 >
-                  <div className="group w-full h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 md:pt-4 flex flex-col justify-between shadow-2xl transition-all duration-500 hover:bg-white hover:text-black overflow-hidden relative">
+                  <div className="group w-full h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 md:pt-4 flex flex-col justify-between shadow-2xl transition-all duration-500 hover:bg-white hover:text-black overflow-visible relative">
                     <div className="flex flex-col h-full z-10 relative pointer-events-none group-hover:pointer-events-auto">
                       <div className="flex items-center justify-between mb-2">
                         <a
@@ -899,7 +899,7 @@ export default function ScrollRevealPage() {
                       </div>
                     </div>
                     {/* Image Preview (Desktop Only) */}
-                    <div className="absolute top-1/2 -translate-y-1/2 -right-[15%] h-[120%] w-auto aspect-9/16 z-50 pointer-events-none opacity-0 translate-x-10 scale-90 rotate-6 group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 group-hover:rotate-0 transition-all duration-500 ease-out hidden md:block">
+                    <div className="absolute top-2/5 -translate-y-1/2 -right-[15%] h-[120%] w-auto aspect-9/16 z-50 pointer-events-none opacity-0 translate-x-10 scale-90 rotate-6 group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 group-hover:rotate-0 transition-all duration-500 ease-out hidden md:block">
                       <Image
                         src={project.image}
                         alt={project.title}
