@@ -876,7 +876,7 @@ export default function ScrollRevealPage() {
                       <h3 className="text-2xl md:text-5xl font-bold text-white mb-2 group-hover:text-black transition-colors duration-300 leading-tight">
                         {project.title}
                       </h3>
-                      <p className="text-base md:text-lg text-blue-300 font-medium mb-4 md:mb-6 group-hover:text-blue-600 transition-colors duration-300">
+                      <p className="text-base md:text-lg text-blue-300 font-medium mb-4 md:mb-6 group-hover:text-gray-600 transition-colors duration-300">
                         {project.subtitle}
                       </p>
                       <div className="mt-auto">
