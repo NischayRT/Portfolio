@@ -1042,6 +1042,7 @@ export default function ScrollRevealPage() {
       {/* 4. CONTACT FORM */}
       <div
         ref={contactSectionRef}
+        id="contact"
         className="min-h-screen flex items-center justify-center px-4 py-20"
       >
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 w-full max-w-4xl rounded-3xl p-8 md:p-12 shadow-2xl">
@@ -1082,11 +1083,7 @@ export default function ScrollRevealPage() {
                 </p>
               </div>
             ) : (
-              <form
-                onSubmit={handleFormSubmit}
-                id="contact"
-                className="space-y-6"
-              >
+              <form onSubmit={handleFormSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="group">
                     <label className="block text-sm font-medium text-gray-300 mb-2">
