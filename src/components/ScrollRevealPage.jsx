@@ -313,6 +313,9 @@ export default function ScrollRevealPage() {
   const projectsContainerRef = useRef(null);
   const projectsTitleRef = useRef(null);
 
+  // Tilt Card Ref (New)
+  const tiltCardRef = useRef(null);
+
   const [greeting, setGreeting] = useState("");
   const [activeSkill, setActiveSkill] = useState(null);
   // Contact Refs
@@ -328,6 +331,8 @@ export default function ScrollRevealPage() {
     submitted: false,
     error: null,
   });
+
+  // --- Handlers ---
   const handleFormChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -374,6 +379,7 @@ export default function ScrollRevealPage() {
     },
     [formData]
   );
+
   const calculateGreeting = useMemo(() => {
     const hour = new Date().getHours();
     return hour < 4
@@ -389,7 +395,47 @@ export default function ScrollRevealPage() {
     setGreeting(calculateGreeting);
   }, [calculateGreeting]);
 
-  // --- 1. HERO / ENTRY ANIMATION ---
+  // --- 3D Tilt Handlers ---
+  const handleTiltMove = (e) => {
+    if (!tiltCardRef.current) return;
+
+    const card = tiltCardRef.current;
+    const rect = card.getBoundingClientRect();
+
+    // Calculate mouse position relative to card center
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    // Calculate rotation (max +/- 10 degrees for subtlety)
+    const rotateX = ((y - centerY) / centerY) * -10; // Inverted X axis
+    const rotateY = ((x - centerX) / centerX) * 10;
+
+    gsap.to(card, {
+      rotationX: rotateX,
+      rotationY: rotateY,
+      duration: 0.4,
+      ease: "power2.out",
+      transformPerspective: 1000,
+      transformStyle: "preserve-3d",
+    });
+  };
+
+  const handleTiltLeave = () => {
+    if (!tiltCardRef.current) return;
+
+    // Snap back to flat on leave
+    gsap.to(tiltCardRef.current, {
+      rotationX: 0,
+      rotationY: 0,
+      duration: 0.7,
+      ease: "elastic.out(1, 0.5)",
+      transformPerspective: 1000,
+      transformStyle: "preserve-3d",
+    });
+  };
+
   // --- 1. HERO / ENTRY ANIMATION ---
   useLayoutEffect(() => {
     const mm = gsap.matchMedia();
@@ -517,9 +563,8 @@ export default function ScrollRevealPage() {
             },
           });
 
-          // Title Animation - Adjusted to be 20px higher
+          // Title Animation
           tl.to(title, {
-            // Mobile: calc(10% - 20px), Desktop: 2rem (approx 32px, vs previous 3.5rem/56px)
             top: isMobile ? "calc(10% - 20px)" : "2rem",
             left: isMobile ? "50%" : "2rem",
             xPercent: isMobile ? -50 : 0,
@@ -600,9 +645,8 @@ export default function ScrollRevealPage() {
             },
           });
 
-          // Title Animation - Adjusted to be 20px higher
+          // Title Animation
           tl.to(title, {
-            // Mobile: calc(10% - 20px), Desktop: 2rem
             top: isMobile ? "calc(10% - 20px)" : "2rem",
             left: isMobile ? "50%" : "2rem",
             xPercent: isMobile ? -50 : 0,
@@ -655,10 +699,6 @@ export default function ScrollRevealPage() {
       {/* ===========================================
         SECTION 1: HERO (STICKY BEHIND CURTAIN) 
         ===========================================
-        ADDED: Wrapper with h-[140vh]. 
-        This provides a scroll track longer than the screen height.
-        The inner content sticks for 100vh, but the extra 40vh 
-        ensures the profile card stays visible before Section 2 overlaps.
       */}
       <div ref={heroWrapperRef} className="relative h-[200vh] w-full">
         <div
@@ -698,12 +738,25 @@ export default function ScrollRevealPage() {
               </h1>
             </div>
 
+            {/* --- PROFILE CARD WRAPPER --- */}
             <div
               ref={profileCardRef}
               className="absolute top-1/2 pb-10 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl px-4 md:px-16"
+              style={{ perspective: "2000px" }}
             >
-              <div className="bg-white/5 backdrop-blur-md w-full border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start hover:bg-white/10 transition-colors duration-500 shadow-2xl">
-                <div className="relative flex-shrink-0">
+              {/* --- 3D TILT CARD START --- */}
+              <div
+                ref={tiltCardRef}
+                onMouseMove={handleTiltMove}
+                onMouseLeave={handleTiltLeave}
+                className="bg-white/5 backdrop-blur-md w-full border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start hover:bg-white/10 transition-colors duration-500 shadow-2xl cursor-pointer"
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                {/* Profile Image */}
+                <div
+                  className="relative flex-shrink-0"
+                  style={{ transform: "translateZ(50px)" }}
+                >
                   <Image
                     src={profilePic}
                     alt="Nischay Reddy"
@@ -711,18 +764,28 @@ export default function ScrollRevealPage() {
                     className="Profile rounded-2xl shadow-2xl ring-2 ring-white/20"
                   />
                 </div>
-                <div className="flex flex-col justify-center w-full">
-                  <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+
+                {/* Text Content */}
+                <div
+                  className="flex flex-col justify-center w-full"
+                  style={{ transform: "translateZ(30px)" }}
+                >
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-3 drop-shadow-lg">
                     Entry Level Software Engineer
                   </h3>
-                  <p className="text-gray-300 leading-relaxed text-sm md:text-base mb-6">
+                  <p className="text-gray-300 leading-relaxed text-sm md:text-base mb-6 drop-shadow-md">
                     A detail-oriented computer science undergraduate looking for
                     an entry-level Software Engineer position in a fast-growing
                     company to apply my expertise in software applications,
                     development, design, and contribute to innovative projects
                     that make tangible impacts.
                   </p>
-                  <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+
+                  {/* Social Pills */}
+                  <div
+                    className="flex flex-wrap gap-3 justify-center md:justify-start"
+                    style={{ transform: "translateZ(40px)" }}
+                  >
                     <SocialPill
                       icon={Linkedin}
                       label="LinkedIn"
@@ -750,6 +813,7 @@ export default function ScrollRevealPage() {
                   </div>
                 </div>
               </div>
+              {/* --- 3D TILT CARD END --- */}
             </div>
           </div>
         </div>
@@ -1018,7 +1082,11 @@ export default function ScrollRevealPage() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleFormSubmit} className="space-y-6">
+              <form
+                onSubmit={handleFormSubmit}
+                id="contact"
+                className="space-y-6"
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="group">
                     <label className="block text-sm font-medium text-gray-300 mb-2">
