@@ -1031,7 +1031,7 @@ export default function ScrollRevealPage() {
                       onChange={handleFormChange}
                       required
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all duration-300"
-                      placeholder="Your Name"
+                      placeholder="Enter Your Name"
                     />
                   </div>
                   <div className="group">
@@ -1045,7 +1045,7 @@ export default function ScrollRevealPage() {
                       onChange={handleFormChange}
                       required
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all duration-300"
-                      placeholder="Your Email Address"
+                      placeholder="Enter Your Email Address"
                     />
                   </div>
                 </div>
