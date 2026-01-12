@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
+// import Link from "next/link"; // We will use standard <a> for smoother hash scrolling with GSAP
 import logoDark from "../../assets/logo-dark.png";
 
 export default function Header() {
@@ -14,29 +14,24 @@ export default function Header() {
       const currentScrollY = window.scrollY;
 
       // --- 1. DESIGN STAGES (Morphing) ---
-      // Trigger Stage 2 (Dark Glass) as soon as we leave the white Hero area
       if (currentScrollY > 800) {
         setScrollStage(2);
       } else if (currentScrollY > 100) {
-        setScrollStage(1); // Profile Card stage
+        setScrollStage(1);
       } else {
-        setScrollStage(0); // Hero stage
+        setScrollStage(0);
       }
 
       // --- 2. VISIBILITY (Smart Hide) ---
-      // ONLY start hiding the navbar after the "Tech Stack" section.
-      // We use a higher threshold (e.g., 2000px) to represent the end of the Skills section.
       const HIDE_THRESHOLD = 2000;
 
       if (currentScrollY > HIDE_THRESHOLD) {
-        // If we are deep in the page (Experience/Projects), toggle visibility based on direction
         if (currentScrollY > lastScrollY.current) {
           setIsVisible(false); // Scrolling DOWN -> Hide
         } else {
           setIsVisible(true); // Scrolling UP -> Show
         }
       } else {
-        // If we are in Hero or Tech Stack, ALWAYS keep it visible
         setIsVisible(true);
       }
 
@@ -46,6 +41,19 @@ export default function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // --- MANUAL SCROLL HANDLER ---
+  const handleContactClick = (e) => {
+    e.preventDefault(); // Prevent default instant jump
+    const contactSection = document.getElementById("contact");
+
+    if (contactSection) {
+      contactSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
 
   return (
     <div
@@ -104,12 +112,14 @@ export default function Header() {
             }
           `}
         >
-          <Link
+          {/* Changed Link to <a> with onClick handler */}
+          <a
             href="#contact"
-            className="whitespace-nowrap font-medium text-sm hover:text-gray-300 transition-colors"
+            onClick={handleContactClick}
+            className="cursor-pointer whitespace-nowrap font-medium text-sm hover:text-gray-300 transition-colors"
           >
             Contact Me
-          </Link>
+          </a>
         </div>
       </header>
     </div>

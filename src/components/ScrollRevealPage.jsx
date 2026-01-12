@@ -1041,8 +1041,8 @@ export default function ScrollRevealPage() {
       </section>
       {/* 4. CONTACT FORM */}
       <div
-        ref={contactSectionRef}
         id="contact"
+        ref={contactSectionRef}
         className="min-h-screen flex items-center justify-center px-4 py-20"
       >
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 w-full max-w-4xl rounded-3xl p-8 md:p-12 shadow-2xl">
