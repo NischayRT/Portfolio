@@ -13,27 +13,30 @@ export default function Header() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // --- 1. Determine Stage (Morphing Shape) ---
+      // --- 1. DESIGN STAGES (Morphing) ---
+      // Trigger Stage 2 (Dark Glass) as soon as we leave the white Hero area
       if (currentScrollY > 800) {
-        setScrollStage(2); // Expanded / Dark Glass
+        setScrollStage(2);
       } else if (currentScrollY > 100) {
-        setScrollStage(1); // Profile Card (Small, Lower)
+        setScrollStage(1); // Profile Card stage
       } else {
-        setScrollStage(0); // Hero (Small, Top)
+        setScrollStage(0); // Hero stage
       }
 
-      // --- 2. Determine Visibility (Hide on Scroll Down) ---
-      // We only want to hide the navbar if we are deep in the page (Stage 2)
-      if (currentScrollY > 800) {
+      // --- 2. VISIBILITY (Smart Hide) ---
+      // ONLY start hiding the navbar after the "Tech Stack" section.
+      // We use a higher threshold (e.g., 2000px) to represent the end of the Skills section.
+      const HIDE_THRESHOLD = 2000;
+
+      if (currentScrollY > HIDE_THRESHOLD) {
+        // If we are deep in the page (Experience/Projects), toggle visibility based on direction
         if (currentScrollY > lastScrollY.current) {
-          // Scrolling DOWN -> Hide
-          setIsVisible(false);
+          setIsVisible(false); // Scrolling DOWN -> Hide
         } else {
-          // Scrolling UP -> Show
-          setIsVisible(true);
+          setIsVisible(true); // Scrolling UP -> Show
         }
       } else {
-        // Always visible in Hero/Profile sections (Stages 0 & 1)
+        // If we are in Hero or Tech Stack, ALWAYS keep it visible
         setIsVisible(true);
       }
 
@@ -63,12 +66,12 @@ export default function Header() {
           }
           ${
             scrollStage === 1
-              ? "w-[120px] rounded-2xl py-3 pt-3 px-6 mt-1 md:mt-4" // Profile Stage
+              ? "w-[120px] rounded-2xl py-3 pt-3 px-6 mt-1 md:mt-4"
               : ""
           }
           ${
             scrollStage === 0
-              ? "w-[150px] rounded-2xl py-3 pt-6 px-4 mt-[-1rem]" // Hero Stage
+              ? "w-[150px] rounded-2xl py-3 pt-6 px-4 mt-[-1rem]"
               : ""
           }
         `}
@@ -90,7 +93,7 @@ export default function Header() {
           />
         </div>
 
-        {/* Contact Button - Expands/Fades in Stage 2 */}
+        {/* Contact Button */}
         <div
           className={`
             transition-all duration-700 ease-in-out overflow-hidden
@@ -101,7 +104,6 @@ export default function Header() {
             }
           `}
         >
-          {/* Note: Ensure the target section in your page has id="contact" */}
           <Link
             href="#contact"
             className="whitespace-nowrap font-medium text-sm hover:text-gray-300 transition-colors"
