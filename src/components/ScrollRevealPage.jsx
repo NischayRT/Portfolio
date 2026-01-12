@@ -986,7 +986,9 @@ export default function ScrollRevealPage() {
               Get In Touch
             </h2>
             <p className="text-gray-300 text-lg">
-              Have a project in mind? Let's connect and make it happen.
+              I'm currently open to new opportunities and collaborations.
+              Whether you have a question, a project idea, or just want to say
+              hello, feel free to drop me a message!
             </p>
           </div>
 
@@ -1020,7 +1022,7 @@ export default function ScrollRevealPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="group">
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Your Name
+                      Your Name*
                     </label>
                     <input
                       type="text"
@@ -1029,12 +1031,12 @@ export default function ScrollRevealPage() {
                       onChange={handleFormChange}
                       required
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all duration-300"
-                      placeholder="John Doe"
+                      placeholder="Your Name"
                     />
                   </div>
                   <div className="group">
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Your Email
+                      Your Email*
                     </label>
                     <input
                       type="email"
@@ -1043,7 +1045,7 @@ export default function ScrollRevealPage() {
                       onChange={handleFormChange}
                       required
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all duration-300"
-                      placeholder="john@example.com"
+                      placeholder="Your Email Address"
                     />
                   </div>
                 </div>
@@ -1059,7 +1061,7 @@ export default function ScrollRevealPage() {
                     required
                     rows={6}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all duration-300 resize-none custom-scrollbar"
-                    placeholder="Tell me about your project..."
+                    placeholder="Your Message"
                   />
                 </div>
 
