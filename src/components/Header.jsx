@@ -96,8 +96,12 @@ export default function Header() {
               ? "w-[90%] md:w-[60%] justify-between bg-black/40 backdrop-blur-md border-white/10 rounded-full py-2 px-6 mt-4 text-white"
               : "justify-center bg-[#ffc8dd]/80 backdrop-blur-md border-white/20 text-black"
           }
-          ${scrollStage === 1 ? "w-[120px] rounded-2xl py-3 px-6 mt-2" : ""}
-          ${scrollStage === 0 ? "w-[150px] rounded-2xl py-4 px-4 mt-0" : ""}
+          ${
+            scrollStage === 1
+              ? "w-[120px] rounded-2xl py-3 px-6 mt-[-1rem]"
+              : ""
+          }
+          ${scrollStage === 0 ? "w-[150px] rounded-2xl py-4 px-4 mt-1" : ""}
         `}
       >
         <div className="flex-shrink-0 relative z-10 transition-transform duration-500">

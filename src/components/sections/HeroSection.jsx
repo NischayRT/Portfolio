@@ -111,9 +111,9 @@ export default function HeroSection() {
 
           <div
             ref={profileCardRef}
-            className="absolute top-1/2 pb-10 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl px-4 md:px-16 will-change-transform"
+            className="absolute top-3/5 pb-10 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl px-3 md:px-16 will-change-transform"
           >
-            <div className="bg-white/5 backdrop-blur-md w-full border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start hover:bg-white/10 transition-colors duration-300 shadow-2xl">
+            <div className="bg-white/5 backdrop-blur-md w-full border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row gap-3 md:gap-8 items-center md:items-start hover:bg-white/10 transition-colors duration-300 shadow-2xl">
               <div className="relative flex-shrink-0">
                 <Image
                   src={profilePic}
@@ -123,10 +123,10 @@ export default function HeroSection() {
                 />
               </div>
               <div className="flex flex-col justify-center w-full">
-                <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-2 md:mb-4">
                   Entry Level Software Engineer
                 </h3>
-                <p className="text-gray-300 leading-relaxed text-sm md:text-base mb-6">
+                <p className="text-gray-300 leading-relaxed text-sm md:text-base mb-3 md:mb-6">
                   A detail-oriented computer science undergraduate looking for
                   an entry-level Software Engineer position in a fast-growing
                   company to apply my expertise in software applications,
