@@ -57,9 +57,9 @@ export default function ProjectsSection() {
               end: () =>
                 `+=${Math.abs(getScrollAmount()) + window.innerHeight}`,
               pin: true,
-              scrub: 0.2, // Reduced from 0.5 - ultra responsive
+              scrub: 0.2,
               invalidateOnRefresh: true,
-              anticipatePin: 1, // Helps with smoother pinning
+              anticipatePin: 1,
             },
           });
 
@@ -69,23 +69,23 @@ export default function ProjectsSection() {
             xPercent: isMobile ? -50 : 0,
             yPercent: 0,
             scale: 1,
-            duration: 0.15, // Reduced from 0.3 - instant feel
-            ease: "power1.out", // Lighter easing for faster feel
+            duration: 0.15,
+            ease: "power1.out",
           })
             .to(
               cards,
               {
                 opacity: 1,
                 y: 0,
-                duration: 0.15, // Reduced from 0.3
-                stagger: 0.02, // Reduced from 0.05 - nearly simultaneous
+                duration: 0.15,
+                stagger: 0.02,
                 ease: "power1.out",
               },
-              "-=0.1" // More overlap
+              "-=0.1"
             )
             .to(container, {
               x: getScrollAmount,
-              duration: 2, // Reduced from 3 - faster horizontal scroll
+              duration: 2,
               ease: "none",
             });
         }
@@ -116,7 +116,11 @@ export default function ProjectsSection() {
             key={index}
             className="relative flex-shrink-0 w-[90vw] md:w-[50vw] h-[60vh] mr-8 md:mr-16"
           >
-            <div className="group w-full h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 md:pt-4 flex flex-col justify-between shadow-2xl transition-all duration-200 hover:bg-white hover:text-black overflow-hidden relative">
+            {/* CHANGES MADE HERE:
+              1. Removed 'overflow-hidden'
+              2. Added 'group-hover:z-[100]' so the active card sits on top of neighbors
+            */}
+            <div className="group w-full h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 md:pt-4 flex flex-col justify-between shadow-2xl transition-all duration-200 hover:bg-white hover:text-black relative group-hover:z-[100]">
               <div className="flex flex-col h-full z-10 relative pointer-events-none group-hover:pointer-events-auto">
                 <div className="flex items-center justify-between mb-2">
                   <a
@@ -156,6 +160,8 @@ export default function ProjectsSection() {
                   </div>
                 </div>
               </div>
+
+              {/* Image Container - This will now be visible outside the card */}
               <div className="absolute top-1/2 -translate-y-1/2 -right-[15%] h-[120%] w-auto aspect-9/16 z-50 pointer-events-none opacity-0 translate-x-10 scale-90 rotate-6 group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 group-hover:rotate-0 transition-all duration-250 ease-out hidden md:block">
                 <Image
                   src={project.image}
