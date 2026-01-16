@@ -101,7 +101,11 @@ export default function Header() {
               ? "w-[120px] rounded-2xl py-3 px-6 mt-[-1rem]"
               : ""
           }
-          ${scrollStage === 0 ? "w-[150px] rounded-2xl py-4 px-4 mt-1" : ""}
+          ${
+            scrollStage === 0
+              ? "w-[150px] rounded-2xl py-4 px-4 mt-[-8rem] "
+              : ""
+          }
         `}
       >
         <div className="flex-shrink-0 relative z-10 transition-transform duration-500">
