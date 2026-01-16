@@ -4,66 +4,13 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ExternalLink } from "lucide-react";
-import {
-  SiNextdotjs,
-  SiTailwindcss,
-  SiVercel,
-  SiHtml5,
-  SiCss3,
-  SiGoogle,
-  SiReact,
-  SiVite,
-  SiPostman,
-} from "react-icons/si";
-import image1 from "../../assets/image1.webp";
-import image2 from "../../assets/image2.webp";
-import image3 from "../../assets/image3.webp";
-import image4 from "../../assets/image4.webp";
+import { PROJECTS_DATA } from "../constants/data";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const PROJECTS_DATA = [
-  {
-    title: "Text Tone Picker",
-    subtitle: "Tone and format changer",
-    url: "https://text-tone-picker.netlify.app/",
-    description:
-      "Tone Picker Text Tool is an online app that utilizes the capabilities of Mistral AI to enable users to improve their writings.",
-    tech: [SiNextdotjs, SiTailwindcss, SiVercel],
-    image: image1,
-  },
-  {
-    title: "Electrify Hyderabad",
-    subtitle: "Electric cars exhibition page",
-    url: "https://electrify-hyd.com/",
-    description:
-      "Developed a quick and completely responsive promotional webpage using HTML and CSS for the CII Electric Car Exhibition.",
-    tech: [SiHtml5, SiCss3, SiGoogle],
-    image: image2,
-  },
-  {
-    title: "SunnySide",
-    subtitle: "A Weather App",
-    url: "https://weather-now-aganitha.netlify.app/",
-    description:
-      "Implemented with React and Vite, utilizing Open-Meteo API for real-time updates and graphical trends.",
-    tech: [SiReact, SiVite, SiTailwindcss],
-    image: image3,
-  },
-  {
-    title: "Foodievery",
-    subtitle: "A Food Delivery App",
-    url: "https://foodievery.netlify.app/",
-    description:
-      "Developed a responsive web application for browsing restaurants, viewing menus, and online ordering.",
-    tech: [SiReact, SiPostman, SiCss3],
-    image: image4,
-  },
-];
-
-export default function Projects() {
+export default function ProjectsSection() {
   const projectsWrapperRef = useRef(null);
   const projectsContainerRef = useRef(null);
   const projectsTitleRef = useRef(null);
@@ -77,9 +24,8 @@ export default function Projects() {
         .toArray(container.children)
         .filter((child) => !child.classList.contains("w-[10vw]"));
 
-      function getScrollAmount() {
-        return -(container.scrollWidth - window.innerWidth);
-      }
+      const getScrollAmount = () =>
+        -(container.scrollWidth - window.innerWidth);
 
       gsap.set(title, {
         position: "absolute",
@@ -91,13 +37,19 @@ export default function Projects() {
         opacity: 1,
         zIndex: 50,
       });
+
       gsap.set(cards, { opacity: 0, y: 50 });
 
       const mm = gsap.matchMedia();
+
       mm.add(
-        { isMobile: "(max-width: 767px)", isDesktop: "(min-width: 768px)" },
+        {
+          isMobile: "(max-width: 767px)",
+          isDesktop: "(min-width: 768px)",
+        },
         (context) => {
           const { isMobile } = context.conditions;
+
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: wrapper,
@@ -105,8 +57,9 @@ export default function Projects() {
               end: () =>
                 `+=${Math.abs(getScrollAmount()) + window.innerHeight}`,
               pin: true,
-              scrub: 1,
+              scrub: 0.2, // Reduced from 0.5 - ultra responsive
               invalidateOnRefresh: true,
+              anticipatePin: 1, // Helps with smoother pinning
             },
           });
 
@@ -116,24 +69,29 @@ export default function Projects() {
             xPercent: isMobile ? -50 : 0,
             yPercent: 0,
             scale: 1,
-            duration: 0.5,
-            ease: "power2.inOut",
+            duration: 0.15, // Reduced from 0.3 - instant feel
+            ease: "power1.out", // Lighter easing for faster feel
           })
             .to(
               cards,
               {
                 opacity: 1,
                 y: 0,
-                duration: 0.5,
-                stagger: 0.1,
-                ease: "power2.out",
+                duration: 0.15, // Reduced from 0.3
+                stagger: 0.02, // Reduced from 0.05 - nearly simultaneous
+                ease: "power1.out",
               },
-              "-=0.25"
+              "-=0.1" // More overlap
             )
-            .to(container, { x: getScrollAmount, duration: 3, ease: "none" });
+            .to(container, {
+              x: getScrollAmount,
+              duration: 2, // Reduced from 3 - faster horizontal scroll
+              ease: "none",
+            });
         }
       );
     }, projectsWrapperRef);
+
     return () => ctx.revert();
   }, []);
 
@@ -158,53 +116,52 @@ export default function Projects() {
             key={index}
             className="relative flex-shrink-0 w-[90vw] md:w-[50vw] h-[60vh] mr-8 md:mr-16"
           >
-            <div className="group w-full h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 md:pt-4 flex flex-col justify-between shadow-2xl transition-all duration-500 hover:bg-white hover:text-black overflow-visible relative">
+            <div className="group w-full h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 md:pt-4 flex flex-col justify-between shadow-2xl transition-all duration-200 hover:bg-white hover:text-black overflow-hidden relative">
               <div className="flex flex-col h-full z-10 relative pointer-events-none group-hover:pointer-events-auto">
                 <div className="flex items-center justify-between mb-2">
                   <a
                     href={project.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex gap-2 items-center cursor-pointer z-50 pointer-events-auto hover:opacity-70 transition-opacity"
+                    className="flex gap-2 items-center cursor-pointer z-50 pointer-events-auto hover:opacity-70 transition-opacity duration-150"
                   >
                     <ExternalLink
                       size={20}
-                      className="text-blue-400 group-hover:text-blue-600 transition-colors"
+                      className="text-blue-400 group-hover:text-blue-600 transition-colors duration-150"
                     />
                   </a>
                 </div>
-                <h3 className="text-2xl md:text-5xl font-bold text-white mb-2 group-hover:text-black transition-colors duration-300 leading-tight">
+                <h3 className="text-2xl md:text-5xl font-bold text-white mb-2 group-hover:text-black transition-colors duration-150 leading-tight">
                   {project.title}
                 </h3>
-                <p className="text-base md:text-lg text-blue-300 font-medium mb-4 md:mb-6 group-hover:text-gray-600 transition-colors duration-300">
+                <p className="text-base md:text-lg text-blue-300 font-medium mb-4 md:mb-6 group-hover:text-blue-600 transition-colors duration-150">
                   {project.subtitle}
                 </p>
                 <div className="mt-auto">
-                  <p className="text-gray-300 text-sm md:text-lg leading-relaxed font-light mb-6 md:mb-8 group-hover:text-gray-700 transition-colors duration-300 line-clamp-3 md:line-clamp-2 w-[100%]">
+                  <p className="text-gray-300 text-sm md:text-lg leading-relaxed font-light mb-6 md:mb-8 group-hover:text-gray-700 transition-colors duration-150 line-clamp-3 md:line-clamp-2 w-[100%]">
                     {project.description}
                   </p>
                   <div className="flex flex-wrap gap-2 md:gap-3">
                     {project.tech.map((TechIcon, i) => (
                       <div
                         key={i}
-                        className="p-2 md:p-3 rounded-xl bg-white/10 border border-white/10 group-hover:bg-gray-100 group-hover:border-gray-200 transition-colors duration-300"
+                        className="p-2 md:p-3 rounded-xl bg-white/10 border border-white/10 group-hover:bg-gray-100 group-hover:border-gray-200 transition-colors duration-150"
                       >
                         <TechIcon
                           size={20}
-                          className="text-white group-hover:text-black transition-colors duration-300"
+                          className="text-white group-hover:text-black transition-colors duration-150"
                         />
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
-              <div className="absolute top-2/5 -translate-y-1/2 -right-[15%] h-[120%] w-auto aspect-9/16 z-50 pointer-events-none opacity-0 translate-x-10 scale-90 rotate-6 group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 group-hover:rotate-0 transition-all duration-500 ease-out hidden md:block">
+              <div className="absolute top-1/2 -translate-y-1/2 -right-[15%] h-[120%] w-auto aspect-9/16 z-50 pointer-events-none opacity-0 translate-x-10 scale-90 rotate-6 group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 group-hover:rotate-0 transition-all duration-250 ease-out hidden md:block">
                 <Image
                   src={project.image}
                   alt={project.title}
                   fill
-                  className="object-contain drop-shadow-2xl z-9999"
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain drop-shadow-2xl"
                 />
               </div>
             </div>
