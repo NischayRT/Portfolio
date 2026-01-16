@@ -162,7 +162,7 @@ export default function ProjectsSection() {
               </div>
 
               {/* Image Container - This will now be visible outside the card */}
-              <div className="absolute top-1/2 -translate-y-1/2 -right-[15%] h-[120%] w-auto aspect-9/16 z-50 pointer-events-none opacity-0 translate-x-10 scale-90 rotate-6 group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 group-hover:rotate-0 transition-all duration-250 ease-out hidden md:block">
+              <div className="absolute top-2/5 -translate-y-1/2 -right-[15%] h-[120%] w-auto aspect-9/16 z-50 pointer-events-none opacity-0 translate-x-10 scale-90 rotate-6 group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 group-hover:rotate-0 transition-all duration-250 ease-out hidden md:block">
                 <Image
                   src={project.image}
                   alt={project.title}
