@@ -23,21 +23,6 @@ export default function HeroSection() {
   const titleTopRef = useRef(null);
   const titleBottomRef = useRef(null);
   const profileCardRef = useRef(null);
-  const [greeting, setGreeting] = useState("");
-
-  const calculateGreeting = useMemo(() => {
-    const hour = new Date().getHours();
-    return hour < 12
-      ? "Good morning"
-      : hour < 18
-      ? "Good afternoon"
-      : "Good evening";
-  }, []);
-
-  useEffect(() => {
-    setGreeting(calculateGreeting);
-  }, [calculateGreeting]);
-
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       gsap.set([titleTopRef.current, titleBottomRef.current], {
@@ -92,9 +77,6 @@ export default function HeroSection() {
             ref={titleTopRef}
             className="absolute top-[20%] md:top-[25%] text-center will-change-transform"
           >
-            <p className="text-transparent bg-clip-text bg-gradient-to-br from-pink-500 via-orange-300 to-orange-600 text-sm font-bold tracking-[0.3em] italic uppercase mb-4 special-heading animate-pulse">
-              {greeting}
-            </p>
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-sans font-thin leading-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-blue-300 opacity-90">
               MY NAME IS
             </h1>

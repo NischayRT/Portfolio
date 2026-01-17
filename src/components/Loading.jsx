@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import Image from "next/image";
 // Make sure this path points to your actual logo
 import logo from "../../assets/logo-light.png";
@@ -9,6 +9,20 @@ export default function Loading({ onLoadComplete }) {
   const containerRef = useRef(null);
   const topPanelRef = useRef(null);
   const bottomPanelRef = useRef(null);
+  const [greeting, setGreeting] = useState("");
+
+  const calculateGreeting = useMemo(() => {
+    const hour = new Date().getHours();
+    return hour < 12
+      ? "Good morning"
+      : hour < 18
+        ? "Good afternoon"
+        : "Good evening";
+  }, []);
+
+  useEffect(() => {
+    setGreeting(calculateGreeting);
+  }, [calculateGreeting]);
   const logoRef = useRef(null);
 
   useEffect(() => {
@@ -85,12 +99,9 @@ export default function Loading({ onLoadComplete }) {
 
       {/* Logo sitting on top of the panels */}
       <div ref={logoRef} className="relative z-20 flex flex-col items-center">
-        <Image
-          src={logo}
-          alt="Logo"
-          className="w-auto h-auto max-h-24 md:max-h-32 object-contain"
-          priority
-        />
+        <h2 className="text-transparent text-2xl md:text-4xl lg:text-5xl bg-clip-text bg-gradient-to-br from-pink-500 via-orange-300 to-orange-600 font-bold tracking-[0.3em] italic uppercase mb-4 special-heading animate-pulse">
+          {greeting}
+        </h2>
       </div>
     </div>
   );
