@@ -18,13 +18,15 @@ import {
   SiVite,
   SiVercel,
   SiNetlify,
+  SiElectron,
+  SiSupabase, 
 } from "react-icons/si";
 import { FaJava } from "react-icons/fa";
 import image1 from "../../../assets/image1.webp";
 import image2 from "../../../assets/image2.webp";
 import image3 from "../../../assets/image3.webp";
 import image4 from "../../../assets/image4.webp";
-
+import image5 from "../../../assets/image5.webp";
 export const SKILLS_DATA = [
   {
     name: "C/C++",
@@ -217,4 +219,13 @@ export const PROJECTS_DATA = [
     tech: [SiReact, SiPostman, SiCss3],
     image: image4,
   },
+  {
+  title: "Drsti",
+  subtitle: "AI-Powered Focus Intelligence",
+  url: "https://drsti.vercel.app/",
+  description:
+    "Built a desktop app with real-time AI gaze detection using MediaPipe FaceMesh, tracking 468 facial landmarks to measure focused vs away time across Pomodoro sessions.",
+  tech: [SiElectron, SiPython, SiReact, SiNextdotjs, SiSupabase],
+  image: image5,
+}
 ];

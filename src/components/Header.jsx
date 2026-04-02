@@ -4,147 +4,141 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "../../assets/logo-dark.png";
 
+/*
+  HEADER BEHAVIOUR
+  ─────────────────
+  • During the hero section (scrollY < SECTION_START) → hidden, translated off-screen upward.
+  • Once the black "main content" section begins (scrollY >= SECTION_START) → slides down as a
+    compact pill. No morphing stages needed — one clean state transition.
+  • Smart hide: hides when scrolling down past HIDE_AFTER, reappears on scroll-up.
+  • "Contact Me" is always visible inside the pill (no hidden/reveal needed with one state).
+*/
+
+const SECTION_START = 620;  // px — approx where the black section begins (after hero profile card)
+const HIDE_AFTER    = 1800; // px — start smart-hide beyond this point
+
 export default function Header() {
-  const [scrollStage, setScrollStage] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
+  const [visible,   setVisible]   = useState(false); // pill visible at all?
+  const [smartHide, setSmartHide] = useState(false); // translate up when scrolling fast down
   const lastScrollY = useRef(0);
-  const ticking = useRef(false);
+  const ticking     = useRef(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (!ticking.current) {
-        window.requestAnimationFrame(() => {
-          const currentScrollY = window.scrollY;
+    const onScroll = () => {
+      if (ticking.current) return;
+      ticking.current = true;
 
-          // --- DESIGN STAGES (Morphing) ---
-          // Stage 0: Initial Pill
-          // Stage 1: Shrinks slightly on scroll
-          // Stage 2: Expands to full bar with "Contact Me"
-          if (currentScrollY > 600) {
-            setScrollStage(2);
-          } else if (currentScrollY > 80) {
-            setScrollStage(1);
-          } else {
-            setScrollStage(0);
-          }
+      window.requestAnimationFrame(() => {
+        const y     = window.scrollY;
+        const delta = y - lastScrollY.current;
 
-          // --- VISIBILITY (Smart Hide) ---
-          const HIDE_THRESHOLD = 1800;
-          const scrollDelta = currentScrollY - lastScrollY.current;
+        // Show pill once we enter the main section
+        setVisible(y >= SECTION_START);
 
-          if (currentScrollY > HIDE_THRESHOLD) {
-            // Only hide if scrolling down significantly
-            if (scrollDelta > 5) {
-              setIsVisible(false);
-            } else if (scrollDelta < -5) {
-              setIsVisible(true);
-            }
-          } else {
-            setIsVisible(true);
-          }
+        // Smart hide only deep in the page
+        if (y > HIDE_AFTER) {
+          if (delta >  6) setSmartHide(true);
+          if (delta < -6) setSmartHide(false);
+        } else {
+          setSmartHide(false);
+        }
 
-          lastScrollY.current = currentScrollY;
-          ticking.current = false;
-        });
-
-        ticking.current = true;
-      }
+        lastScrollY.current = y;
+        ticking.current     = false;
+      });
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleLogoClick = (e) => {
+  const scrollTo = (id) => (e) => {
     e.preventDefault();
-    const heroSection = document.getElementById("hero");
-
-    if (heroSection) {
-      heroSection.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const handleContactClick = (e) => {
-    e.preventDefault();
-    const contactSection = document.getElementById("contact");
-
-    if (contactSection) {
-      contactSection.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  };
+  // Combined visibility: shown only when section started AND not smart-hidden
+  const shown = visible && !smartHide;
 
   return (
-    <div
-      className={`
-        flex justify-center w-full fixed top-0 z-50 pointer-events-none
-        transition-transform duration-300 ease-out
-        ${isVisible ? "translate-y-0" : "-translate-y-full"}
-      `}
-    >
+    /*
+      Outer wrapper: full-width centering container, fixed at top, pointer-events
+      disabled so it never blocks scroll on the hero when hidden.
+    */
+    <div className="fixed top-0 left-0 w-full z-50 flex justify-center pointer-events-none">
       <header
-        className={`
-          flex items-center shadow-lg pointer-events-auto overflow-hidden border
-          transition-all duration-500 ease-out
-          ${
-            scrollStage === 2
-              ? "w-[90%] md:w-[60%] justify-between bg-black/40 backdrop-blur-md border-white/10 rounded-full py-2 px-6 mt-4 text-white"
-              : "justify-center bg-[#ffc8dd]/80 backdrop-blur-md border-white/20 text-black"
-          }
-          ${
-            scrollStage === 1
-              ? "w-[120px] rounded-2xl py-3 px-6 mt-[-1rem]"
-              : ""
-          }
-          ${
-            scrollStage === 0
-              ? "w-[150px] rounded-2xl py-4 px-4 mt-[-8rem] "
-              : ""
-          }
-        `}
-      >
-        <div className="flex-shrink-0 relative z-10 transition-transform duration-500">
-          <Link href="#hero" onClick={handleLogoClick}>
-            <Image
-              src={logo}
-              alt="Logo"
-              priority
-              className={`
-                h-auto w-auto transition-all duration-500
-                ${
-                  scrollStage === 2
-                    ? "max-h-10 invert brightness-200"
-                    : "max-h-14"
-                }
-              `}
-            />
-          </Link>
-        </div>
+        style={{
+          /*
+            Single CSS transition for appear/disappear.
+            translateY(-110%) fully hides the pill above the viewport.
+            opacity fades it in/out simultaneously for a polished feel.
+          */
+          transform:  shown ? "translateY(0)"    : "translateY(-110%)",
+          opacity:    shown ? 1                  : 0,
+          transition: "transform 380ms cubic-bezier(0.34,1.56,0.64,1), opacity 300ms ease",
 
-        {/* Contact Button */}
-        <div
-          className={`
-            transition-all duration-500 ease-out overflow-hidden
-            ${
-              scrollStage === 2
-                ? "max-w-[200px] opacity-100 ml-4"
-                : "max-w-0 opacity-0 ml-0"
-            }
-          `}
+          /* Pill geometry */
+          marginTop: "14px",
+          padding:   "8px 20px 8px 14px",
+          borderRadius: "100px",
+
+          /* Glass style — one layer only, no stacked blur */
+          background: "rgba(8,8,12,0.82)",
+          border:     "1px solid rgba(255,255,255,0.09)",
+          boxShadow:  "0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+        }}
+        className="pointer-events-auto flex items-center gap-5"
+      >
+        {/* Logo */}
+        <Link href="#hero" onClick={scrollTo("hero")} className="flex items-center">
+          <Image
+            src={logo}
+            alt="Logo"
+            priority
+            className="h-auto w-auto max-h-8 invert brightness-200"
+          />
+        </Link>
+
+        {/* Divider */}
+        <span className="w-px h-4 bg-white/10 flex-shrink-0" />
+
+        {/* Nav links */}
+        <nav className="flex items-center gap-5">
+          {[
+            { label: "Skills",      id: "skills"      },
+            { label: "Experience",  id: "experience"  },
+            { label: "Projects",    id: "projects"    },
+          ].map(({ label, id }) => (
+            <a
+              key={id}
+              href={`#${id}`}
+              onClick={scrollTo(id)}
+              className="text-[13px] font-medium text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer whitespace-nowrap"
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+
+        {/* Divider */}
+        <span className="w-px h-4 bg-white/10 flex-shrink-0" />
+
+        {/* CTA */}
+        <a
+          href="#contact"
+          onClick={scrollTo("contact")}
+          className="text-[13px] font-semibold text-white cursor-pointer whitespace-nowrap px-3 py-1 rounded-full transition-all duration-200"
+          style={{
+            background: "linear-gradient(135deg, rgba(59,130,246,0.25), rgba(99,102,241,0.25))",
+            border: "1px solid rgba(99,102,241,0.35)",
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = "linear-gradient(135deg, rgba(59,130,246,0.45), rgba(99,102,241,0.45))"}
+          onMouseLeave={e => e.currentTarget.style.background = "linear-gradient(135deg, rgba(59,130,246,0.25), rgba(99,102,241,0.25))"}
         >
-          <a
-            href="#contact"
-            onClick={handleContactClick}
-            className="cursor-pointer whitespace-nowrap font-medium text-sm hover:text-gray-300 transition-colors duration-200"
-          >
-            Contact Me
-          </a>
-        </div>
+          Contact Me
+        </a>
       </header>
     </div>
   );
