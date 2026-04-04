@@ -149,7 +149,7 @@ export const EXPERIENCE_DATA = [
   {
     company: "8 Views",
     role: "Full Stack Developer Intern",
-    date: "<div>Oct 2025</div> <div style='display: flex;height: 10px;justify-content: center;align-items: center;'> - </div> Present",
+    date: "<div>Oct 2025</div> <div style='display: flex;height: 10px;justify-content: center;align-items: center;'> - </div> Feb 2026",
     location: "Madhapur",
     description: [
       "Designed and optimized responsive web pages using HTML, CSS, Bootstrap, Tailwind, and JavaScript.",
@@ -184,6 +184,15 @@ export const EXPERIENCE_DATA = [
 
 export const PROJECTS_DATA = [
   {
+    title: "Drsti",
+    subtitle: "AI-Powered Focus Intelligence",
+    url: "https://drsti.vercel.app/",
+    description:
+      "Built a desktop app with real-time AI gaze detection using MediaPipe FaceMesh, tracking 468 facial landmarks to measure focused vs away time across Pomodoro sessions.",
+    tech: [SiElectron, SiPython, SiReact, SiNextdotjs, SiSupabase],
+    image: image5,
+},
+{
     title: "Text Tone Picker",
     subtitle: "Tone and format changer",
     url: "https://text-tone-picker.netlify.app/",
@@ -219,13 +228,4 @@ export const PROJECTS_DATA = [
     tech: [SiReact, SiPostman, SiCss3],
     image: image4,
   },
-  {
-  title: "Drsti",
-  subtitle: "AI-Powered Focus Intelligence",
-  url: "https://drsti.vercel.app/",
-  description:
-    "Built a desktop app with real-time AI gaze detection using MediaPipe FaceMesh, tracking 468 facial landmarks to measure focused vs away time across Pomodoro sessions.",
-  tech: [SiElectron, SiPython, SiReact, SiNextdotjs, SiSupabase],
-  image: image5,
-}
 ];
