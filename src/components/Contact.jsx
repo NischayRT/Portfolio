@@ -5,157 +5,168 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
+
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz3OPky4HfShXveekQkjmnTXDW8zIwupVhC5Nk7fKVmSjiiyP0v4_HqewNz9pMfbYTPRw/exec";
+
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [sent, setSent]  = useState(false);
+  const [sent, setSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const ref = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".ct-heading", { y: 60, opacity: 0, duration: 0.9, ease: "power3.out",
-        scrollTrigger: { trigger: ref.current, start: "top 80%" } });
-      gsap.from(".ct-body > *", { y: 30, opacity: 0, duration: 0.7, stagger: 0.15, ease: "power2.out",
-        scrollTrigger: { trigger: ".ct-body", start: "top 85%" } });
+      gsap.from(".ct-heading", {
+        y: 60, opacity: 0, duration: 0.9, ease: "power3.out",
+        scrollTrigger: { trigger: ref.current, start: "top 80%" }
+      });
+      gsap.from(".ct-body > *", {
+        y: 40, opacity: 0, duration: 0.8, stagger: 0.15, ease: "power3.out",
+        scrollTrigger: { trigger: ".ct-body", start: "top 75%" }
+      });
     }, ref);
     return () => ctx.revert();
   }, []);
 
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
-  const handleSubmit = e => {
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
-    setForm({ name: "", email: "", message: "" });
-  };
+    setIsSubmitting(true);
+    const payload = {
+      ...form,
+      timestamp: new Date().toISOString(),
+    };
 
-  const inputStyle = {
-    width: "100%", background: "transparent",
-    border: "none", borderBottom: "1px solid rgba(255,255,255,0.1)",
-    padding: "12px 0", color: "#fff", resize: "none", outline: "none",
-    fontFamily: "var(--font-sans-stack)", fontSize: "clamp(0.9rem,1.5vw,1.05rem)",
-    transition: "border-color 0.2s ease", borderRadius: 0,
-  };
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8", 
+        },
+        body: JSON.stringify(payload),
+      });
 
-  const S = {
-    section: { minHeight: "100dvh", display: "flex", alignItems: "center",
-      justifyContent: "center", padding: "5rem 0",
-      borderTop: "1px solid rgba(255,255,255,0.04)",
-      background: "rgba(0,0,0,0.3)", position: "relative", zIndex: 10 },
-    wrap: { maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "0 1.5rem" },
+      // Success!
+      setSent(true);
+      setForm({ name: "", email: "", message: "" });
+      setTimeout(() => setSent(false), 5000);
+
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <section ref={ref} id="contact" style={S.section}>
-      <div style={S.wrap}>
-
-        <h2 className="ct-heading" style={{ fontFamily: "var(--font-sans-stack)", fontWeight: 900,
-          letterSpacing: "-0.04em", color: "#fff", fontSize: "clamp(2.5rem,9vw,7rem)",
-          lineHeight: 0.92, textTransform: "uppercase", marginBottom: "3rem" }}>
+    <section ref={ref} id="contact" className="relative z-10 flex min-h-screen items-center justify-center py-20 px-6">
+      <div className="mx-auto w-full max-w-7xl">
+        
+        {/* Heading */}
+        <h2 className="ct-heading mb-16 font-sans text-[clamp(3.5rem,8vw,7rem)] font-black leading-[0.9] tracking-tighter text-white uppercase md:mb-24">
           Get In{" "}
-          <span style={{ fontFamily: "var(--font-serif-stack)", fontStyle: "italic", fontWeight: 400,
-            color: "#22d3ee", textTransform: "none" }}>Touch</span>
+          <span className="font-serif font-normal italic text-cyan-400 normal-case drop-shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+            Touch
+          </span>
         </h2>
 
-        <div className="ct-body" style={{ display: "grid", gridTemplateColumns: "1fr 1fr",
-          gap: "4rem", alignItems: "start" }}>
+        {/* Body Layout */}
+        <div className="ct-body grid grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-24 items-start">
 
-          {/* Left */}
-          <div>
-            <p style={{ fontFamily: "var(--font-serif-stack)", fontStyle: "italic",
-              color: "rgba(255,255,255,0.32)", lineHeight: 1.75, marginBottom: "2.5rem",
-              fontSize: "clamp(1rem,2.2vw,1.4rem)" }}>
-              Seeking new opportunities to build and innovate.
-              Let's create something meaningful together.
+          {/* Left Column: Text & Links */}
+          <div className="flex flex-col">
+            <p className="mb-12 font-serif text-[clamp(1.2rem,2.2vw,1.6rem)] italic leading-relaxed text-white/50">
+              Seeking new opportunities to build and innovate. Let's create something meaningful together.
             </p>
-            {[
-              { label: "nischayreddy.dev",  href: "mailto:nischayreddy.t@gmail.com" },
-              { label: "LinkedIn",          href: "https://linkedin.com" },
-              { label: "GitHub",            href: "https://github.com" },
-            ].map(({ label, href }) => (
-              <a key={label} href={href} className="interactive-element"
-                target={href.startsWith("http") ? "_blank" : undefined}
-                rel="noopener noreferrer"
-                style={{ display: "flex", alignItems: "center", gap: "12px",
-                  marginBottom: "12px", textDecoration: "none",
-                  color: "rgba(255,255,255,0.3)", fontSize: "13px",
-                  fontFamily: "var(--font-sans-stack)", transition: "color 0.2s" }}
-                onMouseEnter={e => { e.currentTarget.style.color = "#22d3ee"; }}
-                onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.3)"; }}
-              >
-                <span style={{ height: "1px", width: "20px", background: "currentColor", flexShrink: 0, transition: "width 0.3s" }}
-                  onMouseEnter={e => e.currentTarget.style.width = "36px"}
-                  onMouseLeave={e => e.currentTarget.style.width = "20px"}
-                />
-                {label}
-              </a>
-            ))}
+            
+            <div className="flex flex-col gap-5">
+              {[
+                { label: "nischayreddy.dev", href: "mailto:nischayreddy.t@gmail.com" },
+                { label: "LinkedIn", href: "https://linkedin.com" },
+                { label: "GitHub", href: "https://github.com" },
+              ].map(({ label, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  rel="noopener noreferrer"
+                  className="interactive-element group flex w-fit items-center gap-4 text-sm font-medium text-white/40 transition-colors duration-300 hover:text-cyan-400"
+                >
+                  <span className="h-[1px] w-6 bg-current transition-all duration-300 group-hover:w-12" />
+                  <span className="font-sans tracking-wide">{label}</span>
+                </a>
+              ))}
+            </div>
           </div>
 
-          {/* Right: form */}
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-            {[
-              { name: "name",    label: "Your Name",  type: "text",  tag: "input" },
-              { name: "email",   label: "Your Email", type: "email", tag: "input" },
-              { name: "message", label: "Message",    type: null,    tag: "textarea" },
-            ].map(({ name, label, type, tag: Tag }) => (
-              <div key={name} style={{ position: "relative" }}>
-                <Tag type={type} name={name} id={name} required placeholder=" "
-                  rows={Tag === "textarea" ? 3 : undefined}
-                  value={form[name]} onChange={handleChange}
-                  className="interactive-element"
-                  style={inputStyle}
-                  onFocus={e => e.target.style.borderColor = "rgba(34,211,238,0.5)"}
-                  onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.1)"}
-                />
-                <label htmlFor={name} style={{
-                  position: "absolute", left: 0, top: "12px",
-                  fontFamily: "var(--font-sans-stack)", fontSize: "12px",
-                  color: "rgba(255,255,255,0.28)", letterSpacing: "0.06em",
-                  transition: "all 0.25s ease", pointerEvents: "none",
-                }}>
-                  {label}
-                </label>
-                <style>{`
-                  #${name}:focus ~ label, #${name}:not(:placeholder-shown) ~ label {
-                    top: -16px; font-size: 10px; color: rgba(34,211,238,0.7); letter-spacing: 0.1em;
-                  }
-                `}</style>
-              </div>
-            ))}
+          {/* Right Column: Glassmorphic Form */}
+          <div className="rounded-[24px] border border-white/10 bg-white/[0.02] p-8 backdrop-blur-xl shadow-2xl md:p-12">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-10">
+              {[
+                { name: "name", label: "Your Name", type: "text", tag: "input" },
+                { name: "email", label: "Your Email", type: "email", tag: "input" },
+                { name: "message", label: "Message", type: null, tag: "textarea" },
+              ].map(({ name, label, type, tag: Tag }) => {
+                
+                const hasValue = form[name].length > 0;
 
-            <button type="submit" className="interactive-element" style={{
-              background: "none", border: "none", cursor: "pointer", padding: 0,
-              fontFamily: "var(--font-sans-stack)", fontSize: "12px", fontWeight: 700,
-              letterSpacing: "0.2em", textTransform: "uppercase",
-              color: sent ? "rgba(34,211,238,0.8)" : "rgba(255,255,255,0.5)",
-              display: "flex", alignItems: "center", gap: "12px",
-              transition: "color 0.2s, gap 0.3s",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.color = "#22d3ee"; e.currentTarget.style.gap = "20px"; }}
-              onMouseLeave={e => { e.currentTarget.style.color = sent ? "rgba(34,211,238,0.8)" : "rgba(255,255,255,0.5)"; e.currentTarget.style.gap = "12px"; }}
-            >
-              {sent ? "Sent ✓" : <>Send Message <span style={{ fontSize: "1.1rem" }}>→</span></>}
-            </button>
-          </form>
+                return (
+                  <div key={name} className="relative mt-2">
+                    <Tag
+                      type={type}
+                      name={name}
+                      id={name}
+                      required
+                      value={form[name]}
+                      onChange={handleChange}
+                      disabled={isSubmitting}
+                      rows={Tag === "textarea" ? 4 : undefined}
+                      className="peer interactive-element w-full resize-none border-b border-white/10 bg-transparent py-2 font-sans text-base text-white outline-none transition-colors duration-300 focus:border-cyan-400 disabled:opacity-50"
+                    />
+                    
+                    <label
+                      htmlFor={name}
+                      className={`pointer-events-none absolute left-0 font-sans transition-all duration-300 ${
+                        hasValue
+                          ? "-top-6 text-[10px] tracking-[0.15em] text-white/40 uppercase"
+                          : "top-2 text-sm tracking-[0.06em] text-white/30 peer-focus:-top-6 peer-focus:text-[10px] peer-focus:tracking-[0.15em] peer-focus:text-cyan-400/80 peer-focus:uppercase"
+                      }`}
+                    >
+                      {label}
+                    </label>
+                  </div>
+                );
+              })}
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="interactive-element group mt-4 flex w-fit items-center gap-3 font-sans text-xs font-bold tracking-[0.2em] text-white/50 uppercase transition-all duration-300 hover:text-cyan-400 disabled:pointer-events-none"
+              >
+                {isSubmitting ? (
+                  <span className="animate-pulse text-cyan-400">Sending...</span>
+                ) : sent ? (
+                  <span className="text-cyan-400">Message Sent ✓</span>
+                ) : (
+                  <>
+                    Send Message 
+                    <span className="text-lg transition-transform duration-300 group-hover:translate-x-2">→</span>
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+
         </div>
 
         {/* Footer */}
-        <div style={{ marginTop: "5rem", paddingTop: "1.25rem",
-          borderTop: "1px solid rgba(255,255,255,0.04)",
-          display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "8px",
-          fontFamily: "var(--font-sans-stack)", fontSize: "11px",
-          color: "rgba(255,255,255,0.15)", letterSpacing: "0.04em" }}>
-          <span>© 2025 Nischay Reddy — Next.js & Tailwind</span>
-          <span>v2.0.0 · nischayreddy.dev</span>
+        <div className="mt-32 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-8 font-sans text-[11px] tracking-[0.05em] text-white/20">
+          <span>© 2026 Nischay Reddy — Next.js & Tailwind</span>
+          <span>v2.0.0 · nischayreddy</span>
         </div>
       </div>
-
-      {/* Mobile: single column */}
-      <style>{`
-        @media (max-width: 640px) {
-          .ct-body { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
-        }
-      `}</style>
     </section>
   );
 }
