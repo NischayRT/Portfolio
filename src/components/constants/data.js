@@ -193,11 +193,11 @@ export const PROJECTS_DATA = [
     image: image5,
 },
 {
-    title: "Text Tone Picker",
+    title: "Tone Shift",
     subtitle: "Tone and format changer",
-    url: "https://text-tone-picker.netlify.app/",
+    url: "https://text-tone-shift.vercel.app/",
     description:
-      "Tone Picker Text Tool is an online app that utilizes the capabilities of Mistral AI to enable users to improve their writings.",
+      "Transform any text into platform-native formats instantly. No AI API. No data sent. Fully browser-side.",
     tech: [SiNextdotjs, SiTailwindcss, SiVercel],
     image: image1,
   },
@@ -213,7 +213,7 @@ export const PROJECTS_DATA = [
   {
     title: "SunnySide",
     subtitle: "A Weather App",
-    url: "https://weather-now-aganitha.netlify.app/",
+    url: "https://sunnyside-weather.netlify.app/",
     description:
       "Implemented with React and Vite, utilizing Open-Meteo API for real-time updates and graphical trends.",
     tech: [SiReact, SiVite, SiTailwindcss],

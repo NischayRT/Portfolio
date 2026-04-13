@@ -1,31 +1,27 @@
 import React from "react";
 
-/*
-  FIX: Width animation on flex children forces sibling reflow.
-  Solution: fixed outer size, animate only opacity + transform inside.
-*/
 const SocialPill = React.memo(({ icon: Icon, label, link, color }) => (
   <a
     href={link}
     target="_blank"
     rel="noopener noreferrer"
-    className="group/pill relative flex items-center justify-center overflow-hidden shadow-lg rounded-full"
+    className="group/pill relative flex items-center justify-center overflow-hidden shadow-lg rounded-full w-12 h-12 md:w-12 md:h-12 bg-white/10 border border-white/10 md:hover:w-32 transition-all duration-300 ease-out"
     style={{
-      width: "48px",
-      height: "48px",
-      background: "rgba(255,255,255,0.10)",
-      border: "1px solid rgba(255,255,255,0.10)",
-      transition: "width 280ms cubic-bezier(0.34,1.56,0.64,1), background 250ms ease",
       "--hover-color": color,
     }}
-    onMouseEnter={e => { e.currentTarget.style.width = "128px"; e.currentTarget.style.background = color; }}
-    onMouseLeave={e => { e.currentTarget.style.width = "48px";  e.currentTarget.style.background = "rgba(255,255,255,0.10)"; }}
+    // Apply the brand color only on hover for desktop, or on active (tap) for mobile
+    onMouseEnter={(e) => { 
+      if (window.innerWidth >= 768) e.currentTarget.style.background = color; 
+    }}
+    onMouseLeave={(e) => { 
+      if (window.innerWidth >= 768) e.currentTarget.style.background = "rgba(255,255,255,0.10)"; 
+    }}
   >
     <Icon
       size={20}
-      className="text-white absolute transition-transform duration-300 group-hover/pill:translate-y-8"
+      className="text-white absolute transition-transform duration-300 md:group-hover/pill:translate-y-8"
     />
-    <span className="absolute opacity-0 -translate-y-4 text-xs font-bold text-white uppercase tracking-wider transition-all duration-300 group-hover/pill:opacity-100 group-hover/pill:translate-y-0 whitespace-nowrap pointer-events-none">
+    <span className="absolute opacity-0 -translate-y-4 text-xs font-bold text-white uppercase tracking-wider transition-all duration-300 md:group-hover/pill:opacity-100 md:group-hover/pill:translate-y-0 whitespace-nowrap pointer-events-none">
       {label}
     </span>
   </a>

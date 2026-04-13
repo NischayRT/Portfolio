@@ -1,134 +1,181 @@
 "use client";
-import React, { useRef, useLayoutEffect } from "react";
+import React, { useRef, useLayoutEffect, useCallback, useState, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ExternalLink } from "lucide-react";
 import { PROJECTS_DATA } from "../constants/data";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * 3D Tilt Effect for cards
+ */
+function useTilt(ref) {
+  const onMove = useCallback((e) => {
+    const el = ref.current; if (!el) return;
+    const { left, top, width, height } = el.getBoundingClientRect();
+    const x = ((e.clientX - left) / width  - 0.5) * 14;
+    const y = ((e.clientY - top)  / height - 0.5) * -10;
+    el.style.transform = `perspective(1200px) rotateY(${x}deg) rotateX(${y}deg) scale3d(1.02, 1.02, 1.02)`;
+  }, [ref]);
+
+  const onLeave = useCallback(() => {
+    if (ref.current)
+      ref.current.style.transform = "perspective(1200px) rotateY(0) rotateX(0) scale3d(1, 1, 1)";
+  }, [ref]);
+
+  return { onMouseMove: onMove, onMouseLeave: onLeave };
 }
 
-export default function ProjectsSection() {
-  const wrapperRef   = useRef(null);
-  const containerRef = useRef(null);
-  const titleRef     = useRef(null);
+function ProjectCard({ project, index, compact = false }) {
+  const ref  = useRef(null);
+  const tilt = useTilt(ref);
+
+  return (
+    <a 
+      ref={ref} 
+      href={project.url} 
+      target="_blank" 
+      rel="noopener noreferrer"
+      {...(!compact ? tilt : {})}
+      className="interactive-element group relative block h-full w-full overflow-hidden transition-all duration-300"
+      style={{
+        borderRadius: "28px",
+        background: "rgba(255, 255, 255, 0.03)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        boxShadow: "0 20px 50px rgba(0, 0, 0, 0.2)",
+        transformStyle: "preserve-3d",
+      }}
+    >
+      {/* Background Image with Overlay */}
+      <Image 
+        src={project.image} 
+        alt={project.title} 
+        fill
+        className="object-cover opacity-40 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-75" 
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+
+      {/* Floating Tag */}
+      <div className="absolute top-6 right-6 z-20">
+        <span className="rounded-full border border-white/10 bg-black/20 px-4 py-1.5 font-sans text-[9px] font-medium tracking-[0.15em] text-white/50 uppercase backdrop-blur-md">
+          {project.subtitle}
+        </span>
+      </div>
+
+      {/* Content */}
+      <div className="absolute inset-x-8 bottom-8 z-20">
+        <div className="mb-3 font-sans text-[10px] font-bold tracking-[0.25em] text-cyan-400 uppercase">
+          Project — 0{index + 1}
+        </div>
+        
+        <h3 className="mb-4 font-serif text-[clamp(2rem,4vw,3.5rem)] font-normal italic leading-[1.1] text-white">
+          {project.title}
+        </h3>
+        
+        <p className="mb-6 line-clamp-3 font-sans text-sm font-light leading-relaxed text-white/40 md:text-base">
+          {project.description}
+        </p>
+
+        <div className="flex items-center justify-between">
+          <div className="flex flex-wrap gap-3">
+            {project.tech.map((Icon, i) => (
+              <Icon key={i} size={18} className="text-white/30 transition-colors group-hover:text-cyan-400" />
+            ))}
+          </div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-all group-hover:bg-cyan-400 group-hover:text-black">
+            <span className="text-xl">↗</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+function MobileProjects() {
+  return (
+    <section id="projects" className="relative z-10 py-20">
+      <div className="mx-auto max-w-7xl px-6">
+        <h2 className="mb-12 font-sans text-5xl font-black tracking-tighter text-white md:text-7xl">
+          Selected <span className="font-serif font-normal italic text-cyan-400">Works</span>
+        </h2>
+        <div className="flex flex-col gap-6">
+          {PROJECTS_DATA.map((p, i) => (
+            <div key={i} className="h-[450px]">
+              <ProjectCard project={p} index={i} compact />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DesktopProjects() {
+  const wrapRef = useRef(null);
+  const conRef  = useRef(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      const wrapper   = wrapperRef.current;
-      const container = containerRef.current;
-      const title     = titleRef.current;
-      const cards     = gsap.utils.toArray(container.children)
-                             .filter(c => !c.classList.contains("spacer"));
-
-      let cached = 0;
-      const getScrollAmount = () => {
-        cached = -(container.scrollWidth - window.innerWidth);
-        return cached;
-      };
-
-      gsap.set(title, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 1.5, opacity: 1, zIndex: 50 });
-      gsap.set(cards, { opacity: 0, y: 40, willChange: "transform, opacity" });
-
-      const mm = gsap.matchMedia();
-      mm.add({ isMobile: "(max-width: 767px)", isDesktop: "(min-width: 768px)" }, (ctx) => {
-        const { isMobile } = ctx.conditions;
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: wrapper,
-            start: "top top",
-            end: () => `+=${Math.abs(getScrollAmount()) + window.innerHeight}`,
-            pin: true,
-            scrub: 1,
-            invalidateOnRefresh: true,
-            anticipatePin: 1,
-            fastScrollEnd: true,
-          },
-        });
-
-        tl.to(title, {
-            top: isMobile ? "calc(10% - 20px)" : "2rem",
-            left: isMobile ? "50%" : "2rem",
-            xPercent: isMobile ? -50 : 0,
-            yPercent: 0, scale: 1,
-            duration: 0.2, ease: "power2.out",
-          })
-          .to(cards, {
-            opacity: 1, y: 0,
-            duration: 0.2, stagger: 0.05, ease: "power2.out",
-            onComplete: () => gsap.set(cards, { willChange: "auto" }),
-          }, "-=0.1")
-          .to(container, { x: getScrollAmount, duration: 2, ease: "none" });
+      const con = conRef.current;
+      const getAmt = () => -(con.scrollWidth - window.innerWidth);
+      
+      gsap.to(con, {
+        x: getAmt,
+        ease: "none",
+        scrollTrigger: {
+          trigger: wrapRef.current,
+          start: "top top",
+          end: () => `+=${Math.abs(getAmt())}`,
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
+        },
       });
-    }, wrapperRef);
-
+    }, wrapRef);
     return () => ctx.revert();
   }, []);
 
   return (
-    <div ref={wrapperRef} className="h-screen overflow-hidden flex flex-col justify-center relative">
-      <h2
-        ref={titleRef}
-        className="absolute text-3xl md:text-4xl text-white opacity-0 drop-shadow-xl shiny-silver whitespace-nowrap z-50 pointer-events-none"
-        style={{ willChange: "transform, opacity" }}
-      >
-        <div>Featured</div><div>Projects</div>
-      </h2>
+    <section ref={wrapRef} id="projects" className="relative z-10 h-screen w-full overflow-hidden flex flex-col justify-center">
+      {/* Section Header */}
+      <div className="absolute top-12 left-[5vw] z-30">
+        <h2 className="font-sans text-7xl font-black tracking-tighter text-white">
+          My <span className="font-serif font-normal italic text-cyan-400 drop-shadow-[0_0_30px_rgba(34,211,238,0.2)]">Projects</span>
+        </h2>
+      </div>
 
-      <div
-        ref={containerRef}
-        className="h-full flex flex-nowrap items-center pl-[5vw] md:pl-[10vw] pr-[20vw]"
+      {/* Horizontal Container */}
+      <div 
+        ref={conRef}
+        className="flex items-center gap-12 px-[5vw] pt-20"
         style={{ width: "fit-content" }}
       >
-        {PROJECTS_DATA.map((project, index) => (
-          <div key={index} className="relative flex-shrink-0 w-[90vw] md:w-[50vw] h-[60vh] mr-8 md:mr-16">
-            <div
-              className="group isolate w-full h-full border border-white/10 rounded-3xl p-6 md:p-8 md:pt-4 flex flex-col justify-between shadow-2xl transition-colors duration-200 hover:bg-white hover:text-blue-700 relative"
-              style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%)" }}
-            >
-              <div className="flex flex-col h-full z-10 relative pointer-events-none group-hover:pointer-events-auto">
-                <div className="flex items-center justify-between mb-2">
-                  <a
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex gap-2 items-center cursor-pointer z-50 pointer-events-auto hover:opacity-70 transition-opacity duration-150"
-                  >
-                    <ExternalLink size={20} className="text-blue-400 group-hover:text-blue-600 transition-colors duration-150" />
-                  </a>
-                </div>
-                <h3 className="text-2xl md:text-5xl font-bold text-white mb-2 group-hover:text-[#ffd7a2] transition-colors duration-150 leading-tight">
-                  {project.title}
-                </h3>
-                <p className="text-base md:text-lg text-blue-300 font-medium mb-4 md:mb-6 group-hover:text-blue-500 transition-colors duration-150">
-                  {project.subtitle}
-                </p>
-                <div className="mt-auto">
-                  <p className="text-gray-300 text-sm md:text-lg leading-relaxed font-light mb-6 md:mb-8 group-hover:text-gray-100 transition-colors duration-150 line-clamp-3 md:line-clamp-2 w-full">
-                    {project.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2 md:gap-3">
-                    {project.tech.map((TechIcon, i) => (
-                      <div key={i} className="p-2 md:p-3 rounded-xl bg-white/10 border border-white/10 group-hover:bg-gray-100 group-hover:border-gray-200 transition-colors duration-150">
-                        <TechIcon size={20} className="text-white group-hover:text-black transition-colors duration-150" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Hover image reveal — pure CSS */}
-              <div className="absolute top-2/5 -translate-y-1/2 -right-[15%] h-[120%] w-auto aspect-9/16 z-50 pointer-events-none opacity-0 translate-x-10 scale-90 rotate-6 group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 group-hover:rotate-0 transition-all duration-250 ease-out hidden md:block">
-                <Image src={project.image} alt={project.title} fill className="object-contain drop-shadow-2xl" />
-              </div>
-            </div>
+        {PROJECTS_DATA.map((p, i) => (
+          <div key={i} className="h-[65vh] w-[55vw] min-w-[600px] max-w-[850px] flex-shrink-0">
+            <ProjectCard project={p} index={i} />
           </div>
         ))}
-        <div className="spacer w-[10vw] flex-shrink-0" />
       </div>
-    </div>
+    </section>
   );
+}
+
+export default function ProjectsSection() {
+  const [isMobile, setIsMobile] = useState(false);
+  const [mounted,  setMounted]  = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check(); 
+    setMounted(true);
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  if (!mounted) return null;
+
+  return isMobile ? <MobileProjects /> : <DesktopProjects />;
 }

@@ -1,73 +1,161 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
 export default function Contact() {
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-  const [formStatus, setFormStatus] = useState({ submitting: false, submitted: false, error: null });
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [sent, setSent]  = useState(false);
+  const ref = useRef(null);
 
-  const handleFormChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".ct-heading", { y: 60, opacity: 0, duration: 0.9, ease: "power3.out",
+        scrollTrigger: { trigger: ref.current, start: "top 80%" } });
+      gsap.from(".ct-body > *", { y: 30, opacity: 0, duration: 0.7, stagger: 0.15, ease: "power2.out",
+        scrollTrigger: { trigger: ".ct-body", start: "top 85%" } });
+    }, ref);
+    return () => ctx.revert();
   }, []);
 
-  const handleFormSubmit = useCallback(async (e) => {
+  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleSubmit = e => {
     e.preventDefault();
-    setFormStatus({ submitting: true, submitted: false, error: null });
-    try {
-      await fetch("https://script.google.com/macros/s/AKfycbz3OPky4HfShXveekQkjmnTXDW8zIwupVhC5Nk7fKVmSjiiyP0v4_HqewNz9pMfbYTPRw/exec", {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, timestamp: new Date().toISOString() }),
-      });
-      setFormStatus({ submitting: false, submitted: true, error: null });
-      setFormData({ name: "", email: "", message: "" });
-      setTimeout(() => setFormStatus({ submitting: false, submitted: false, error: null }), 5000);
-    } catch (error) {
-      setFormStatus({ submitting: false, submitted: false, error: "Failed to send message. Please try again." });
-    }
-  }, [formData]);
+    setSent(true);
+    setTimeout(() => setSent(false), 4000);
+    setForm({ name: "", email: "", message: "" });
+  };
+
+  const inputStyle = {
+    width: "100%", background: "transparent",
+    border: "none", borderBottom: "1px solid rgba(255,255,255,0.1)",
+    padding: "12px 0", color: "#fff", resize: "none", outline: "none",
+    fontFamily: "var(--font-sans-stack)", fontSize: "clamp(0.9rem,1.5vw,1.05rem)",
+    transition: "border-color 0.2s ease", borderRadius: 0,
+  };
+
+  const S = {
+    section: { minHeight: "100dvh", display: "flex", alignItems: "center",
+      justifyContent: "center", padding: "5rem 0",
+      borderTop: "1px solid rgba(255,255,255,0.04)",
+      background: "rgba(0,0,0,0.3)", position: "relative", zIndex: 10 },
+    wrap: { maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "0 1.5rem" },
+  };
 
   return (
-    <div id="contact" className="min-h-screen flex items-center justify-center px-4 py-20">
-      <div className="bg-white/5 backdrop-blur-xl border border-white/10 w-full max-w-4xl rounded-3xl p-8 md:p-12 shadow-2xl">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 shiny-silver">Get In Touch</h2>
-          <p className="text-gray-300 text-lg">I'm currently open to new opportunities and collaborations. Whether you have a question, a project idea, or just want to say hello, feel free to drop me a message!</p>
+    <section ref={ref} id="contact" style={S.section}>
+      <div style={S.wrap}>
+
+        <h2 className="ct-heading" style={{ fontFamily: "var(--font-sans-stack)", fontWeight: 900,
+          letterSpacing: "-0.04em", color: "#fff", fontSize: "clamp(2.5rem,9vw,7rem)",
+          lineHeight: 0.92, textTransform: "uppercase", marginBottom: "3rem" }}>
+          Get In{" "}
+          <span style={{ fontFamily: "var(--font-serif-stack)", fontStyle: "italic", fontWeight: 400,
+            color: "#22d3ee", textTransform: "none" }}>Touch</span>
+        </h2>
+
+        <div className="ct-body" style={{ display: "grid", gridTemplateColumns: "1fr 1fr",
+          gap: "4rem", alignItems: "start" }}>
+
+          {/* Left */}
+          <div>
+            <p style={{ fontFamily: "var(--font-serif-stack)", fontStyle: "italic",
+              color: "rgba(255,255,255,0.32)", lineHeight: 1.75, marginBottom: "2.5rem",
+              fontSize: "clamp(1rem,2.2vw,1.4rem)" }}>
+              Seeking new opportunities to build and innovate.
+              Let's create something meaningful together.
+            </p>
+            {[
+              { label: "nischayreddy.dev",  href: "mailto:nischayreddy.t@gmail.com" },
+              { label: "LinkedIn",          href: "https://linkedin.com" },
+              { label: "GitHub",            href: "https://github.com" },
+            ].map(({ label, href }) => (
+              <a key={label} href={href} className="interactive-element"
+                target={href.startsWith("http") ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                style={{ display: "flex", alignItems: "center", gap: "12px",
+                  marginBottom: "12px", textDecoration: "none",
+                  color: "rgba(255,255,255,0.3)", fontSize: "13px",
+                  fontFamily: "var(--font-sans-stack)", transition: "color 0.2s" }}
+                onMouseEnter={e => { e.currentTarget.style.color = "#22d3ee"; }}
+                onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.3)"; }}
+              >
+                <span style={{ height: "1px", width: "20px", background: "currentColor", flexShrink: 0, transition: "width 0.3s" }}
+                  onMouseEnter={e => e.currentTarget.style.width = "36px"}
+                  onMouseLeave={e => e.currentTarget.style.width = "20px"}
+                />
+                {label}
+              </a>
+            ))}
+          </div>
+
+          {/* Right: form */}
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+            {[
+              { name: "name",    label: "Your Name",  type: "text",  tag: "input" },
+              { name: "email",   label: "Your Email", type: "email", tag: "input" },
+              { name: "message", label: "Message",    type: null,    tag: "textarea" },
+            ].map(({ name, label, type, tag: Tag }) => (
+              <div key={name} style={{ position: "relative" }}>
+                <Tag type={type} name={name} id={name} required placeholder=" "
+                  rows={Tag === "textarea" ? 3 : undefined}
+                  value={form[name]} onChange={handleChange}
+                  className="interactive-element"
+                  style={inputStyle}
+                  onFocus={e => e.target.style.borderColor = "rgba(34,211,238,0.5)"}
+                  onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.1)"}
+                />
+                <label htmlFor={name} style={{
+                  position: "absolute", left: 0, top: "12px",
+                  fontFamily: "var(--font-sans-stack)", fontSize: "12px",
+                  color: "rgba(255,255,255,0.28)", letterSpacing: "0.06em",
+                  transition: "all 0.25s ease", pointerEvents: "none",
+                }}>
+                  {label}
+                </label>
+                <style>{`
+                  #${name}:focus ~ label, #${name}:not(:placeholder-shown) ~ label {
+                    top: -16px; font-size: 10px; color: rgba(34,211,238,0.7); letter-spacing: 0.1em;
+                  }
+                `}</style>
+              </div>
+            ))}
+
+            <button type="submit" className="interactive-element" style={{
+              background: "none", border: "none", cursor: "pointer", padding: 0,
+              fontFamily: "var(--font-sans-stack)", fontSize: "12px", fontWeight: 700,
+              letterSpacing: "0.2em", textTransform: "uppercase",
+              color: sent ? "rgba(34,211,238,0.8)" : "rgba(255,255,255,0.5)",
+              display: "flex", alignItems: "center", gap: "12px",
+              transition: "color 0.2s, gap 0.3s",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.color = "#22d3ee"; e.currentTarget.style.gap = "20px"; }}
+              onMouseLeave={e => { e.currentTarget.style.color = sent ? "rgba(34,211,238,0.8)" : "rgba(255,255,255,0.5)"; e.currentTarget.style.gap = "12px"; }}
+            >
+              {sent ? "Sent ✓" : <>Send Message <span style={{ fontSize: "1.1rem" }}>→</span></>}
+            </button>
+          </form>
         </div>
-        <div className="w-full">
-          {formStatus.submitted ? (
-            <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-8 text-center">
-              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-              </div>
-              <h3 className="text-2xl font-bold text-green-400 mb-2">Message Sent!</h3>
-              <p className="text-gray-300">Thank you for reaching out. I'll get back to you soon.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleFormSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="group">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Your Name*</label>
-                  <input type="text" name="name" value={formData.name} onChange={handleFormChange} required className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all duration-300" placeholder="Enter Your Name" />
-                </div>
-                <div className="group">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Your Email*</label>
-                  <input type="email" name="email" value={formData.email} onChange={handleFormChange} required className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all duration-300" placeholder="Enter Your Email Address" />
-                </div>
-              </div>
-              <div className="group">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Your Message</label>
-                <textarea name="message" value={formData.message} onChange={handleFormChange} required rows={6} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-white/10 transition-all duration-300 resize-none custom-scrollbar" placeholder="Your Message" />
-              </div>
-              {formStatus.error && <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-center"><p className="text-red-400">{formStatus.error}</p></div>}
-              <button type="submit" disabled={formStatus.submitting} className="w-full py-4 px-8 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500/50 transform hover:scale-[1.02] active:scale-[0.98]">
-                {formStatus.submitting ? <span className="flex items-center justify-center gap-2"><svg className="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>Sending...</span> : "Send Message"}
-              </button>
-            </form>
-          )}
+
+        {/* Footer */}
+        <div style={{ marginTop: "5rem", paddingTop: "1.25rem",
+          borderTop: "1px solid rgba(255,255,255,0.04)",
+          display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "8px",
+          fontFamily: "var(--font-sans-stack)", fontSize: "11px",
+          color: "rgba(255,255,255,0.15)", letterSpacing: "0.04em" }}>
+          <span>© 2025 Nischay Reddy — Next.js & Tailwind</span>
+          <span>v2.0.0 · nischayreddy.dev</span>
         </div>
       </div>
-    </div>
+
+      {/* Mobile: single column */}
+      <style>{`
+        @media (max-width: 640px) {
+          .ct-body { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+        }
+      `}</style>
+    </section>
   );
 }

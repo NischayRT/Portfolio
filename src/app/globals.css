@@ -1,156 +1,109 @@
-/* globals.css */
+/* 1. Imports MUST come first */
 @import "tailwindcss";
 
+/* ── ROOT ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #080808;
+  --surface: #0f0f0f;
+  --border: rgba(255,255,255,0.06);
+  --text-muted: rgba(255,255,255,0.28);
+  --text-dim: rgba(255,255,255,0.12);
+  --cyan: #22d3ee;
+  --font-sans-stack: var(--font-inter, "Inter", sans-serif);
+  --font-serif-stack: var(--font-playfair, "Playfair Display", serif);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* ── BASE ── */
+*, *::before, *::after { box-sizing: border-box;}
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: "Comfortaa", sans-serif;
-}
-html {
+  background: var(--bg);
+  color: #fff;
+  font-family: var(--font-sans-stack);
   overflow-x: hidden;
+  cursor: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-/* --- UPDATED CARD STYLES --- */
-.home {
-  /* Change solid white to a glass-white border with low opacity */
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 10px;
+@media (hover: none) and (pointer: coarse) { body { cursor: auto; } }
+.font-serif { font-family: var(--font-serif-stack) !important; }
+
+/* ══════════════════════════════════════════
+   3D CANVAS BACKGROUND
+   Three.js canvas sits here; CSS blobs as
+   fallback on low-end devices
+══════════════════════════════════════════ */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
   width: 100%;
   height: 100%;
-  position: relative;
-  transition: all 0.5s ease;
 }
 
-/* Add a subtle vignette/noise texture via pseudo-element if desired */
-.home::before {
+/* Dark vignette over the 3D canvas */
+.bg-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 50%, transparent 0%, rgba(8,8,8,0.55) 100%),
+    linear-gradient(to bottom, rgba(8,8,8,0.3) 0%, transparent 30%, transparent 70%, rgba(8,8,8,0.6) 100%);
+  pointer-events: none;
+}
+
+/* ── NOISE ── */
+.noise-overlay {
+  position: fixed; inset: 0; z-index: 50; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.038'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+/* ══════════════════════════════════════════
+   SKILL BOXES — image-1 style
+   Dark rounded squares, inner glow on hover
+══════════════════════════════════════════ */
+.skill-box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 18px;
+  background: #0c0c0c;
+  border: 1px solid rgba(255,255,255,0.07);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
+  aspect-ratio: 1;
+}
+.skill-box::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-  opacity: 0.4;
-  pointer-events: none;
-  z-index: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 50%, var(--glow-color, transparent) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
-.home-1 {
-  border-top-left-radius: 32px; /* Increased radius for modern look */
-  border-top-right-radius: 32px;
-  border-bottom: none;
-  background: radial-gradient(
-    circle at 50% 100%,
-    #1e3a8a 0%,
-    #020617 70%
-  ); /* Deep blue gradient */
-}
+.skill-box:hover { transform: scale(1.06); border-color: var(--glow-color, rgba(255,255,255,0.18)); }
+.skill-box:hover::before { opacity: 0.12; }
+.skill-box.active { border-color: var(--glow-color, rgba(255,255,255,0.25)); transform: scale(1.04); }
+.skill-box.active::before { opacity: 0.14; }
 
-.home-2 {
-  border-top: none;
-  border-bottom-left-radius: 32px;
-  border-bottom-right-radius: 32px;
-  background: radial-gradient(
-    circle at 50% 0%,
-    #1e3a8a 0%,
-    #020617 70%
-  ); /* Matches top half */
-}
-p {
-  font-family: "roboto", sans-serif;
-  font-size: 15px;
-}
-@media (min-width: 768px) {
-  p {
-    font-size: 20px;
-  }
-}
-.icon-logo {
-  height: -webkit-fill-available;
-  width: auto;
-  padding: 10px;
-}
-.shiny-silver {
-  background: linear-gradient(
-    90deg,
-    #9a9a9a 0%,
-    #cfcfcf 20%,
-    #ffffff 35%,
-    #dcdcdc 50%,
-    #ffffff 65%,
-    #cfcfcf 80%,
-    #9a9a9a 100%
-  );
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* ── UTILITIES ── */
+.hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.text-glow-cyan { text-shadow: 0 0 50px rgba(34,211,238,0.4), 0 0 100px rgba(34,211,238,0.15); }
+.icon-logo { filter: invert(1) brightness(2); }
 
-  animation: shine-horizontal 3.5s linear infinite;
-}
+/* horizontal rule decoration */
+.hr-dim { border: none; border-top: 1px solid var(--border); }
 
-/* Horizontal shimmer */
-@keyframes shine-horizontal {
-  from {
-    background-position: 0% center;
-  }
-  to {
-    background-position: 300% center;
-  }
+@supports (padding: max(0px)) {
+  .safe-bottom { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
 }
-/* ===============================
-   SKILLS SECTION BACKGROUND
-================================ */
-
-.skill-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.5;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.skill-left {
-  /* Deep Indigo/Purple Gradient */
-  background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%);
-  width: 50vmax;
-  height: 50vmax;
-  top: -10%;
-  left: -10%;
-  animation: diagonalZigZag 10s ease-in-out infinite;
-}
-
-.skill-right {
-  /* Deep Blue/Cyan Gradient */
-  background: linear-gradient(135deg, #172554 0%, #0e7490 100%);
-  width: 45vmax;
-  height: 45vmax;
-  bottom: -10%;
-  right: -10%;
-  animation: diagonalZigZag 12s ease-in-out infinite;
-  animation-delay: -2s;
-}
-
-/* Optional: Add a subtle grid pattern overlay for a "tech" feel */
-.tech-grid {
-  background-size: 50px 50px;
-  background-image: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0.03) 1px,
-      transparent 1px
-    ),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }

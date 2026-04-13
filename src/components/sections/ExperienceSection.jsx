@@ -1,123 +1,108 @@
 "use client";
-import React, { useRef, useLayoutEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Briefcase, Calendar, MapPin } from "lucide-react";
 import { EXPERIENCE_DATA } from "../constants/data";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
+
+const stripHtml = (s) => s.replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
 
 export default function ExperienceSection() {
-  const wrapperRef   = useRef(null);
-  const containerRef = useRef(null);
-  const titleRef     = useRef(null);
+  const ref = useRef(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const ctx = gsap.context(() => {
-      const wrapper   = wrapperRef.current;
-      const container = containerRef.current;
-      const title     = titleRef.current;
-      const cards     = gsap.utils.toArray(container.children)
-                             .filter(c => !c.classList.contains("spacer"));
-
-      // Cache scroll amount — avoids scrollWidth reflow on every scrub frame
-      let cached = 0;
-      const getScrollAmount = () => {
-        cached = -(container.scrollWidth - window.innerWidth);
-        return cached;
-      };
-
-      gsap.set(title, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 1.5, opacity: 1, zIndex: 50 });
-      gsap.set(cards, { opacity: 0, y: 40, willChange: "transform, opacity" });
-
-      const mm = gsap.matchMedia();
-      mm.add({ isMobile: "(max-width: 767px)", isDesktop: "(min-width: 768px)" }, (ctx) => {
-        const { isMobile } = ctx.conditions;
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: wrapper,
-            start: "top top",
-            end: () => `+=${Math.abs(getScrollAmount()) + window.innerHeight}`,
-            pin: true,
-            scrub: 1,              // Smooth but physically connected
-            invalidateOnRefresh: true,
-            anticipatePin: 1,
-            fastScrollEnd: true,
-          },
-        });
-
-        tl.to(title, {
-            top:      isMobile ? "calc(10% - 20px)" : "2rem",
-            left:     isMobile ? "50%" : "2rem",
-            xPercent: isMobile ? -50   : 0,
-            yPercent: 0, scale: 1,
-            duration: 0.2, ease: "power2.out",
-          })
-          .to(cards, {
-            opacity: 1, y: 0,
-            duration: 0.2, stagger: 0.05, ease: "power2.out",
-            onComplete: () => gsap.set(cards, { willChange: "auto" }),
-          }, "-=0.1")
-          .to(container, { x: getScrollAmount, duration: 2, ease: "none" });
+      gsap.from(".ex-heading", { y: 50, opacity: 0, duration: 0.8, ease: "power3.out",
+        scrollTrigger: { trigger: ref.current, start: "top 78%" } });
+      gsap.utils.toArray(".ex-row").forEach(row => {
+        gsap.from(row, { x: -30, opacity: 0, duration: 0.6, ease: "power2.out",
+          scrollTrigger: { trigger: row, start: "top 88%", toggleActions: "play none none none" } });
       });
-    }, wrapperRef);
-
+    }, ref);
     return () => ctx.revert();
   }, []);
 
-  return (
-    <div ref={wrapperRef} className="h-screen overflow-hidden flex flex-col justify-center relative">
-      <h2
-        ref={titleRef}
-        className="absolute text-3xl md:text-4xl text-white opacity-0 drop-shadow-xl shiny-silver whitespace-nowrap z-50 pointer-events-none"
-        style={{ willChange: "transform, opacity" }}
-      >
-        <div>My</div><div>Experience</div>
-      </h2>
+  const S = {
+    section: { minHeight: "100dvh", display: "flex", flexDirection: "column",
+      justifyContent: "center", padding: "5rem 0", position: "relative", zIndex: 10 },
+    wrap: { maxWidth: "1280px", margin: "0 5%", padding: "0 1.5rem" },
+  };
 
-      <div
-        ref={containerRef}
-        className="h-full flex flex-nowrap items-center pl-[5vw] md:pl-[10vw] pr-[20vw]"
-        style={{ width: "fit-content" }}
-      >
-        {EXPERIENCE_DATA.map((exp, index) => (
-          <div key={index} className="relative flex-shrink-0 w-[90vw] md:w-[60vw] lg:w-[45vw] h-[65vh] mr-8 md:mr-24">
-            {/* No backdrop-blur — kills GPU with multiple pinned layers */}
-            <div className="w-full h-full bg-white/[0.06] border border-white/10 rounded-3xl p-6 md:p-12 flex flex-col shadow-2xl transition-transform duration-200 hover:scale-[1.015] overflow-hidden"
-                 style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%)" }}>
-              <div className="flex-shrink-0 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 pb-4 border-b border-white/10">
-                <div>
-                  <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">{exp.company}</h3>
-                  <p className="text-lg md:text-xl text-blue-300 font-medium flex items-center gap-2">
-                    <Briefcase size={18} /> {exp.role}
-                  </p>
+  return (
+    <section ref={ref} id="experience" style={S.section}>
+      <div style={S.wrap}>
+
+        <h2 className="ex-heading" style={{ fontFamily: "var(--font-sans-stack)", fontWeight: 900,
+          letterSpacing: "-0.04em", color: "#fff", marginBottom: "2.5rem",
+          fontSize: "clamp(2rem,6vw,4rem)" }}>
+          My{" "}<span className="font-serif font-normal italic text-cyan-400 drop-shadow-[0_0_30px_rgba(34,211,238,0.2)]">Experiences</span>
+        </h2>
+
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+          {EXPERIENCE_DATA.map((exp, i) => (
+            <div key={i} className="ex-row"
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", padding: "1.75rem 0",
+                cursor: "default" }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.012)"}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+            >
+              {/* Top row */}
+              <div style={{ display: "flex", justifyContent: "space-between",
+                alignItems: "flex-start", gap: "1rem", flexWrap: "wrap" }}>
+
+                <div style={{ display: "flex", gap: "1.25rem", alignItems: "flex-start", flex: 1, minWidth: 0 }}>
+                  {/* Index */}
+                  <span style={{ fontFamily: "var(--font-sans-stack)", fontSize: "11px", fontWeight: 700,
+                    letterSpacing: "0.1em", color: "#22d3ee", flexShrink: 0, paddingTop: "6px" }}>
+                    0{i+1}
+                  </span>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontFamily: "var(--font-sans-stack)", fontWeight: 900,
+                      letterSpacing: "-0.03em", color: "#fff", lineHeight: 1.05,
+                      fontSize: "clamp(1.5rem,4vw,3rem)", wordBreak: "break-word", marginBottom: "4px" }}>
+                      {exp.company}
+                    </div>
+                    <div style={{ fontFamily: "var(--font-serif-stack)", fontStyle: "italic",
+                      color: "rgba(255,255,255,0.38)", fontSize: "clamp(0.85rem,1.8vw,1.1rem)" }}>
+                      {exp.role}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-col items-start md:items-end gap-1 text-gray-400 text-sm font-mono">
-                  <span className="flex items-center gap-2"><Calendar size={14} /><span dangerouslySetInnerHTML={{ __html: exp.date }} /></span>
-                  <span className="flex items-center gap-2"><MapPin size={14} /> {exp.location}</span>
+
+                {/* Date + location */}
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  <div style={{ fontFamily: "var(--font-sans-stack)", fontSize: "10px",
+                    letterSpacing: "0.12em", textTransform: "uppercase",
+                    color: "rgba(255,255,255,0.22)", marginBottom: "2px" }}>
+                    {stripHtml(exp.date)}
+                  </div>
+                  <div style={{ fontFamily: "var(--font-sans-stack)", fontSize: "10px",
+                    letterSpacing: "0.12em", textTransform: "uppercase",
+                    color: "rgba(255,255,255,0.18)" }}>
+                    {exp.location}
+                  </div>
                 </div>
               </div>
-              <div className="flex-grow overflow-y-auto custom-scrollbar pr-2">
-                <ul className="space-y-4 pb-12">
-                  {exp.description.map((point, i) => (
-                    <li key={i} className="flex items-start gap-3 text-gray-300 leading-relaxed font-light text-sm md:text-base">
-                      <span className="mt-2 min-w-[6px] min-h-[6px] rounded-full bg-blue-500/80 shadow-[0_0_10px_rgba(59,130,246,0.6)]" />
-                      <span>{point}</span>
+
+              {/* Bullets — always visible on mobile, hover-expand on desktop via group */}
+              <div style={{ paddingLeft: "2.5rem", marginTop: "1rem" }}>
+                <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {exp.description.map((pt, j) => (
+                    <li key={j} style={{ display: "flex", alignItems: "flex-start", gap: "10px",
+                      fontFamily: "var(--font-sans-stack)", fontSize: "clamp(0.78rem,1.3vw,0.88rem)",
+                      color: "rgba(255,255,255,0.32)", lineHeight: 1.7 }}>
+                      <span style={{ flexShrink: 0, width: "4px", height: "4px", borderRadius: "50%",
+                        background: "#22d3ee", opacity: 0.6, marginTop: "8px" }} />
+                      {pt}
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="absolute bottom-4 right-6 text-8xl md:text-9xl font-bold text-white/5 select-none pointer-events-none font-serif">
-                0{index + 1}
-              </div>
             </div>
-          </div>
-        ))}
-        <div className="spacer w-[10vw] flex-shrink-0" />
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

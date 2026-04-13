@@ -1,105 +1,97 @@
 "use client";
-import "../app/MeshGradient.css";
-import "../app/globals.css";
-import React from "react";
+import React, { useLayoutEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import dynamic from "next/dynamic";
 
+// Make sure your paths are correct for your project
 import HeroSection from "./sections/HeroSection";
+import SkillsSection from "./sections/SkillsSection";
+import ExperienceSection from "./sections/ExperienceSection";
+import ProjectsSection from "./sections/ProjectsSection";
 import Contact from "./Contact";
+import CustomCursor from "./CustomCursor";
+import AnimatedBackground from "./AnimatedBackground"; 
 
-const SkillsSection    = dynamic(() => import("./sections/SkillsSection"),    { ssr: false, loading: () => <div className="min-h-screen" /> });
-const ExperienceSection = dynamic(() => import("./sections/ExperienceSection"), { ssr: false, loading: () => <div className="min-h-screen" /> });
-const ProjectsSection   = dynamic(() => import("./sections/ProjectsSection"),   { ssr: false, loading: () => <div className="min-h-screen" /> });
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+/* We map your sections to specific Tailwind/Hex colors and animations 
+  for the AnimatedBackground component. 
+*/
+const BACKGROUND_CONFIGS = {
+  hero: { 
+    colors: ["bg-[#1a4b8c]", "bg-[#0a7a82]", "bg-[#122e5c]"], 
+    animation: "animate-blob" 
+  },
+  skills: { 
+    colors: ["bg-[#0f766e]", "bg-[#0369a1]", "bg-[#1d4ed8]"], // Teals & Blues
+    animation: "animate-blob-wide" 
+  },
+  experience: { 
+    colors: ["bg-[#7e22ce]", "bg-[#be185d]", "bg-[#4c1d95]"], // Purples & Pinks
+    animation: "animate-blob-spin" 
+  },
+  projects: { 
+    colors: ["bg-[#be123c]", "bg-[#c2410c]", "bg-[#9f1239]"], // Reds & Oranges
+    animation: "animate-blob-wide" 
+  },
+  contact: { 
+    colors: ["bg-[#0369a1]", "bg-[#1e3a8a]", "bg-[#0f172a]"], // Dark Blues
+    animation: "animate-blob-spin" 
+  },
+};
 
 export default function ScrollRevealPage() {
+  const [activeSection, setActiveSection] = useState("hero");
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // Loop through our configurations and create a ScrollTrigger for each section ID
+      Object.keys(BACKGROUND_CONFIGS).forEach((key) => {
+        ScrollTrigger.create({
+          trigger: `#${key}`,
+          start: "top 55%",
+          onEnter: () => setActiveSection(key),
+          onEnterBack: () => setActiveSection(key),
+        });
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
+  // Get the current colors and animation based on the active section state
+  const currentConfig = BACKGROUND_CONFIGS[activeSection] || BACKGROUND_CONFIGS.hero;
+
   return (
-    <div className="relative bg-black min-h-screen selection:bg-blue-500/30">
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar       { width: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
-
-        /*
-          SECTION BACKGROUND
-          ──────────────────
-          A layered ambient background for the content section that echoes the
-          hero's colour palette (blue / indigo / near-black) but much darker and
-          more static — atmosphere without distraction.
-
-          Layer order (bottom → top):
-            1. Deep navy base  (#07080f)
-            2. Large radial blue glow — top-left, mimics hero blob direction
-            3. Large radial indigo glow — bottom-right, counter-balance
-            4. Subtle top-edge gradient that blends into the hero transition
-            5. Fine dot grid — gives depth without being loud
-            6. Noise grain overlay — ties texture to hero section
-        */
-        .section-bg {
-          background-color: #07080f;
-          background-image:
-            /* blue glow — upper left */
-            radial-gradient(ellipse 70% 55% at 10% 15%,  rgba(37,99,235,0.11)  0%, transparent 65%),
-            /* indigo glow — lower right */
-            radial-gradient(ellipse 60% 50% at 90% 85%,  rgba(79,70,229,0.09)  0%, transparent 65%),
-            /* faint warm centre accent */
-            radial-gradient(ellipse 40% 30% at 50% 50%,  rgba(30,58,138,0.06)  0%, transparent 70%),
-            /* top-edge blend to match hero bottom */
-            linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 120px),
-            /* dot grid */
-            radial-gradient(circle, rgba(255,255,255,0.028) 1px, transparent 1px);
-          background-size: 100% 100%, 100% 100%, 100% 100%, 100% 120px, 28px 28px;
-        }
-
-        /* Slow-drifting ambient glow — keeps the bg alive without JS */
-        @keyframes drift-blue {
-          0%, 100% { opacity: 0.11; transform: translate(0, 0)    scale(1);    }
-          50%       { opacity: 0.16; transform: translate(2%, 1.5%) scale(1.04); }
-        }
-        @keyframes drift-indigo {
-          0%, 100% { opacity: 0.09; transform: translate(0, 0)     scale(1);    }
-          50%       { opacity: 0.14; transform: translate(-2%, -1%) scale(1.03); }
-        }
-        .glow-blue   { animation: drift-blue   14s ease-in-out infinite; }
-        .glow-indigo { animation: drift-indigo 18s ease-in-out infinite; }
-      `}</style>
-
-      {/* Hero */}
-      <HeroSection />
-
-      {/*
-        Main content section.
-        • section-bg class → ambient dot-grid + glow background
-        • Two animated glow blobs are pure CSS — zero JS, zero reflow.
-        • Section IDs added here as wrappers so the Header nav can scroll to them.
+    <div className="relative w-full">
+      <CustomCursor />
+      
+      {/* This replaces the ThreeBackground. 
+        It receives the dynamic colors from our GSAP ScrollTrigger state.
       */}
-      <section className="section-bg relative z-10 border-t border-white/[0.06]" style={{ boxShadow: "0 -1px 0 rgba(59,130,246,0.08)" }}>
+      <AnimatedBackground 
+        colors={currentConfig.colors} 
+        animationStyle={currentConfig.animation} 
+      />
+      
+      <div className="noise-overlay pointer-events-none fixed inset-0 z-0 opacity-20" />
+      <div className="bg-vignette pointer-events-none fixed inset-0 z-0" />
 
-        {/* Animated ambient blobs (CSS only, position:absolute so no layout cost) */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-          <div className="glow-blue  absolute w-[55vw] h-[55vw] rounded-full top-[-10%]  left-[-10%]"
-               style={{ background: "radial-gradient(circle, rgba(37,99,235,0.10) 0%, transparent 70%)" }} />
-          <div className="glow-indigo absolute w-[50vw] h-[50vw] rounded-full bottom-[5%]  right-[-8%]"
-               style={{ background: "radial-gradient(circle, rgba(79,70,229,0.09) 0%, transparent 70%)" }} />
-        </div>
-
-        {/* Content with section anchor IDs */}
-        <div id="skills">
-          <SkillsSection />
-        </div>
-        <div id="experience">
-          <ExperienceSection />
-        </div>
-        <div id="projects">
-          <ProjectsSection />
-        </div>
+      {/* Note: I changed the IDs to match the GSAP triggers perfectly */}
+      <div id="hero" className="relative z-10">
+        <HeroSection />
+      </div>
+      <div id="skills" className="relative z-10">
+        <SkillsSection />
+      </div>
+      <div id="experience" className="relative z-10">
+        <ExperienceSection />
+      </div>
+      <div id="projects" className="relative z-10">
+        <ProjectsSection />
+      </div>
+      <div id="contact" className="relative z-10">
         <Contact />
-      </section>
+      </div>
     </div>
   );
 }
