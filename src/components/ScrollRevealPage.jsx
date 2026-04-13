@@ -17,29 +17,36 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 /* We map your sections to specific Tailwind/Hex colors and animations 
   for the AnimatedBackground component. 
 */
+/* High-Contrast "Drastic" Palette Mapping 
+  Each section jumps to a completely different color temperature to make the transitions pop.
+*/
 const BACKGROUND_CONFIGS = {
   hero: { 
-    colors: ["bg-[#1a4b8c]", "bg-[#0a7a82]", "bg-[#122e5c]"], 
+    // Vibe: Deep Ocean (Cool Blues & Cyans)
+    colors: ["bg-[#0f172a]", "bg-[#0891b2]", "bg-[#1e3a8a]"], 
     animation: "animate-blob" 
   },
   skills: { 
-    colors: ["bg-[#0f766e]", "bg-[#0369a1]", "bg-[#1d4ed8]"], // Teals & Blues
+    // Vibe: Fiery Magma (Drastic shift to warm Reds, Oranges, & Crimson)
+    colors: ["bg-[#7f1d1d]", "bg-[#ea580c]", "bg-[#9f1239]"], 
     animation: "animate-blob-wide" 
   },
   experience: { 
-    colors: ["bg-[#7e22ce]", "bg-[#be185d]", "bg-[#4c1d95]"], // Purples & Pinks
+    // Vibe: Toxic/Cyberpunk Green (Drastic shift to bright Emerald & Teal)
+    colors: ["bg-[#064e3b]", "bg-[#10b981]", "bg-[#0f766e]"], 
     animation: "animate-blob-spin" 
   },
   projects: { 
-    colors: ["bg-[#be123c]", "bg-[#c2410c]", "bg-[#9f1239]"], // Reds & Oranges
+    // Vibe: Neon Synthwave (Drastic shift to deep Purples & bright Pinks)
+    colors: ["bg-[#4c1d95]", "bg-[#db2777]", "bg-[#581c87]"], 
     animation: "animate-blob-wide" 
   },
   contact: { 
-    colors: ["bg-[#0369a1]", "bg-[#1e3a8a]", "bg-[#0f172a]"], // Dark Blues
+    // Vibe: Dark Gold Sunset (Drastic shift to rich Ambers & pure darkness)
+    colors: ["bg-[#b45309]", "bg-[#020617]", "bg-[#ca8a04]"], 
     animation: "animate-blob-spin" 
   },
 };
-
 export default function ScrollRevealPage() {
   const [activeSection, setActiveSection] = useState("hero");
 
