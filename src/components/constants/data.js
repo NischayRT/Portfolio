@@ -186,7 +186,7 @@ export const PROJECTS_DATA = [
   {
     title: "Drsti",
     subtitle: "AI-Powered Focus Intelligence",
-    url: "https://drsti.vercel.app/",
+    url: "https://drsti-web.vercel.app/",
     description:
       "Built a desktop app with real-time AI gaze detection using MediaPipe FaceMesh, tracking 468 facial landmarks to measure focused vs away time across Pomodoro sessions.",
     tech: [SiElectron, SiPython, SiReact, SiNextdotjs, SiSupabase],
