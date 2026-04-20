@@ -12,13 +12,13 @@ export default function AnimatedBackground({
       
       {/* Layer 1: The Animated Gradient Blobs */}
       <div 
-        className={`absolute top-[-10%] left-[-10%] h-[50vw] w-[50vw] ${animationStyle} rounded-full ${colors[0]} opacity-60 mix-blend-screen blur-[80px] transition-colors duration-1000 ease-in-out`} 
+        className={`absolute top-[-10%] left-[-8%] h-[50vw] w-[50vw] ${animationStyle} rounded-full ${colors[0]} opacity-60 mix-blend-screen blur-[80px] transition-colors duration-1000 ease-in-out`} 
       />
       <div 
         className={`absolute right-[-10%] top-[10%] h-[45vw] w-[45vw] ${animationStyle} rounded-full ${colors[1]} opacity-50 mix-blend-screen blur-[80px] animation-delay-2000 transition-colors duration-1000 ease-in-out`} 
       />
       <div 
-        className={`absolute bottom-[-20%] left-[20%] h-[60vw] w-[60vw] ${animationStyle} rounded-full ${colors[2]} opacity-70 mix-blend-screen blur-[80px] animation-delay-4000 transition-colors duration-1000 ease-in-out`} 
+        className={`absolute bottom-[-25%] left-[32%] h-[60vw] w-[90vw] ${animationStyle} rounded-full ${colors[2]} opacity-60 mix-blend-screen blur-[80px] animation-delay-4000 transition-colors duration-1000 ease-in-out`} 
       />
 
       {/* Layer 2: The Grainy Noise Overlay */}

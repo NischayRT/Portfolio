@@ -14,9 +14,9 @@ function useTilt(ref) {
   const onMove = useCallback((e) => {
     const el = ref.current; if (!el) return;
     const { left, top, width, height } = el.getBoundingClientRect();
-    const x = ((e.clientX - left) / width  - 0.5) * 14;
+    const x = ((e.clientX - left) / width  - 0.5) * 16;
     const y = ((e.clientY - top)  / height - 0.5) * -10;
-    el.style.transform = `perspective(1200px) rotateY(${x}deg) rotateX(${y}deg) scale3d(1.02, 1.02, 1.02)`;
+    el.style.transform = `perspective(1260px) rotateY(${x}deg) rotateX(${y}deg) scale3d(1.06, 1.06, 1.06)`;
   }, [ref]);
 
   const onLeave = useCallback(() => {

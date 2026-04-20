@@ -25,11 +25,11 @@ export default function CustomCursor() {
 
     /* Enter state (The "Magnifying Glass" Hover Effect) */
     const enter = () => gsap.to(cursor, {
-      scale: 0.6, // Expands to act as a lens
+      scale: 0.4, // Expands to act as a lens
       backgroundColor: "rgba(255, 255, 255, 0.05)",
       borderColor: "rgba(34, 211, 238, 0.4)", // Subtle cyan border on hover
-      backdropFilter: "blur(6px) brightness(1.1)", // Glass magnification effect
-      WebkitBackdropFilter: "blur(6px) brightness(1.1)",
+      backdropFilter: "blur(4px) brightness(1.1)", // Glass magnification effect
+      WebkitBackdropFilter: "blur(4px) brightness(1.1)",
       duration: 0.3, 
       ease: "power3.out",
     });

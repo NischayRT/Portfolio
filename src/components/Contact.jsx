@@ -2,9 +2,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { FaEnvelope, FaLinkedin, FaGithub } from "react-icons/fa";
+import { SiLeetcode, SiCodechef } from "react-icons/si";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
-
 
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz3OPky4HfShXveekQkjmnTXDW8zIwupVhC5Nk7fKVmSjiiyP0v4_HqewNz9pMfbYTPRw/exec";
 
@@ -12,6 +13,7 @@ export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeLinkIndex, setActiveLinkIndex] = useState(null); // Tracks mobile clicks
   const ref = useRef(null);
 
   useEffect(() => {
@@ -33,25 +35,17 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const payload = {
-      ...form,
-      timestamp: new Date().toISOString(),
-    };
+    const payload = { ...form, timestamp: new Date().toISOString() };
 
     try {
       await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8", 
-        },
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload),
       });
-
-      // Success!
       setSent(true);
       setForm({ name: "", email: "", message: "" });
       setTimeout(() => setSent(false), 5000);
-
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("Something went wrong. Please try again.");
@@ -59,6 +53,14 @@ export default function Contact() {
       setIsSubmitting(false);
     }
   };
+
+  const links = [
+    { label: "nischayreddy.dev", href: "mailto:nischayreddy.t@gmail.com", Icon: FaEnvelope },
+    { label: "LinkedIn", href: "https://linkedin.com/in/nischayrt", Icon: FaLinkedin },
+    { label: "GitHub", href: "https://github.com/NischayRT", Icon: FaGithub },
+    { label: "LeetCode", href: "https://leetcode.com/u/user0322sl/", Icon: SiLeetcode },
+    { label: "CodeChef", href: "https://www.codechef.com/users/nischayreddy", Icon: SiCodechef },
+  ];
 
   return (
     <section ref={ref} id="contact" className="relative z-10 flex min-h-screen items-center justify-center py-20 px-6">
@@ -81,23 +83,58 @@ export default function Contact() {
               Seeking new opportunities to build and innovate. Let's create something meaningful together.
             </p>
             
-            <div className="flex flex-col gap-5">
-              {[
-                { label: "nischayreddy.dev", href: "mailto:nischayreddy.t@gmail.com" },
-                { label: "LinkedIn", href: "https://linkedin.com/in/nischayrt" },
-                { label: "GitHub", href: "https://github.com/NischayRT" },
-              ].map(({ label, href }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target={href.startsWith("http") ? "_blank" : undefined}
-                  rel="noopener noreferrer"
-                  className="interactive-element group flex w-fit items-center gap-4 text-sm font-medium text-white/40 transition-colors duration-300 hover:text-cyan-400"
-                >
-                  <span className="h-[1px] w-6 bg-current transition-all duration-300 group-hover:w-12" />
-                  <span className="font-sans tracking-wide">{label}</span>
-                </a>
-              ))}
+            <div className="flex flex-col gap-3">
+              {links.map(({ label, href, Icon }, index) => {
+                const isActive = activeLinkIndex === index;
+
+                const handleClick = (e) => {
+                  // If on a touch device, first click reveals animation, second click navigates
+                  if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
+                    if (!isActive) {
+                      e.preventDefault();
+                      setActiveLinkIndex(index);
+                    }
+                  }
+                };
+
+                return (
+                  <a
+                    key={label}
+                    href={href}
+                    onClick={handleClick}
+                    onMouseLeave={() => setActiveLinkIndex(null)} // Reset if they drag finger off
+                    target={href.startsWith("http") ? "_blank" : undefined}
+                    rel="noopener noreferrer"
+                    // Added py-2 so the absolute line has space to drop below the text
+                    className="group relative flex w-fit items-center gap-4 py-2 text-sm font-medium text-white/40 transition-colors duration-300 hover:text-cyan-400"
+                  >
+                    {/* The Icon Container */}
+                    <div className="relative h-5 w-5 shrink-0 overflow-hidden flex items-center justify-center">
+                      <Icon
+                        className={`absolute inset-0 m-auto text-[18px] transition-all duration-300 ease-out ${
+                          isActive
+                            ? "translate-y-0 opacity-100"
+                            : "translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100"
+                        }`}
+                      />
+                    </div>
+
+                    {/* The Text Label */}
+                    <span className="font-sans tracking-wide transition-all duration-300">
+                      {label}
+                    </span>
+
+                    {/* The Animated Line */}
+                    <span
+                      className={`absolute left-0 h-[1px] bg-current transition-all duration-300 ease-in-out ${
+                        isActive
+                          ? "top-full w-full translate-y-0" // Mobile clicked state (drops down & expands)
+                          : "top-1/2 w-6 -translate-y-1/2 group-hover:top-full group-hover:translate-y-0 group-hover:w-full" // Desktop hover states
+                      }`}
+                    />
+                  </a>
+                );
+              })}
             </div>
           </div>
 
