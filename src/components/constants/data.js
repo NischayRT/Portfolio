@@ -220,6 +220,15 @@ export const PROJECTS_DATA = [
     image: image3,
   },
   {
+    title: "VSR Vriksha",
+    subtitle: "Naturopathy & Wellness Landing Page",
+    url: "https://vsrvriksha.com/",
+    description:
+      "Shipped multi-page architecture covering services, blogs, about, and treatments — with a URL-driven tab system, accordion location highlights, embedded maps, Scaledino lead capture, and a fully responsive layout across all screen sizes.",
+    tech: [SiNextdotjs, SiPostman, SiVercel, SiTailwindcss],
+    image: Image6,
+  },
+  {
     title: "Foodievery",
     subtitle: "A Food Delivery App",
     url: "https://foodievery.netlify.app/",
