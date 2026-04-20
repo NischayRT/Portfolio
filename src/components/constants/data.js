@@ -27,6 +27,7 @@ import image2 from "../../../assets/image2.webp";
 import image3 from "../../../assets/image3.webp";
 import image4 from "../../../assets/image4.webp";
 import image5 from "../../../assets/image5.webp";
+import image6 from "../../../assets/image6.webp";
 export const SKILLS_DATA = [
   {
     name: "C/C++",
@@ -226,7 +227,7 @@ export const PROJECTS_DATA = [
     description:
       "Shipped multi-page architecture covering services, blogs, about, and treatments — with a URL-driven tab system, accordion location highlights, embedded maps, Scaledino lead capture, and a fully responsive layout across all screen sizes.",
     tech: [SiNextdotjs, SiPostman, SiVercel, SiTailwindcss],
-    image: Image6,
+    image: image6,
   },
   {
     title: "Foodievery",

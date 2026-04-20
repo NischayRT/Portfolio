@@ -64,7 +64,7 @@ export default function ExperienceSection() {
                       {exp.company}
                     </div>
                     <div style={{ fontFamily: "var(--font-serif-stack)", fontStyle: "italic",
-                      color: "rgba(255,255,255,0.38)", fontSize: "clamp(0.85rem,1.8vw,1.1rem)" }}>
+                      color: "rgba(255,255,255,0.6)", fontSize: "clamp(0.85rem,1.8vw,1.1rem)" }}>
                       {exp.role}
                     </div>
                   </div>
@@ -74,12 +74,12 @@ export default function ExperienceSection() {
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   <div style={{ fontFamily: "var(--font-sans-stack)", fontSize: "10px",
                     letterSpacing: "0.12em", textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.22)", marginBottom: "2px" }}>
+                    color: "rgba(255,255,255,0.5)", marginBottom: "2px" }}>
                     {stripHtml(exp.date)}
                   </div>
                   <div style={{ fontFamily: "var(--font-sans-stack)", fontSize: "10px",
                     letterSpacing: "0.12em", textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.18)" }}>
+                    color: "rgba(255,255,255,0.45)" }}>
                     {exp.location}
                   </div>
                 </div>
@@ -91,7 +91,7 @@ export default function ExperienceSection() {
                   {exp.description.map((pt, j) => (
                     <li key={j} style={{ display: "flex", alignItems: "flex-start", gap: "10px",
                       fontFamily: "var(--font-sans-stack)", fontSize: "clamp(0.78rem,1.3vw,0.88rem)",
-                      color: "rgba(255,255,255,0.32)", lineHeight: 1.7 }}>
+                      color: "rgba(255,255,255,0.4)", lineHeight: 1.7 }}>
                       <span style={{ flexShrink: 0, width: "4px", height: "4px", borderRadius: "50%",
                         background: "#22d3ee", opacity: 0.6, marginTop: "8px" }} />
                       {pt}
