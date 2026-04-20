@@ -33,6 +33,7 @@ export default function CustomCursor() {
       WebkitBackdropFilter: "blur(6px) brightness(1.1)",
       duration: 0.3, 
       ease: "power3.out",
+      "pointer-events": "none",
     });
 
     /* Leave state (Default small pointer) */
