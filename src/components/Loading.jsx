@@ -27,7 +27,7 @@ function TypedLine({ prefix, text, highlight, startDelay, onDone }) {
         }
       }, 26);
       return () => clearInterval(iv);
-    }, startDelay * 1000);
+    }, startDelay * 900);
     return () => clearTimeout(outer);
   }, [text, startDelay, onDone]);
 
@@ -52,11 +52,11 @@ export default function Loading({ onLoadComplete }) {
 
   useEffect(() => {
     if (!allDone) return;
-    const tl = gsap.timeline({ delay: 0.45 });
-    tl.to(cardRef.current, { y: -8, duration: 0.25, ease: "power2.out" })
+    const tl = gsap.timeline({ delay: 0.25 });
+    tl.to(cardRef.current, { y: -8, duration: 0.15, ease: "power2.out" })
       .to(overlayRef.current, {
         opacity: 0,
-        duration: 0.65,
+        duration: 0.60,
         ease: "power2.inOut",
         onComplete: () => onLoadComplete?.(),
       }, "+=0.05");
@@ -97,7 +97,7 @@ export default function Loading({ onLoadComplete }) {
           <span className="w-[11px] h-[11px] rounded-full" style={{ background: "#febc2e" }} />
           <span className="w-[11px] h-[11px] rounded-full" style={{ background: "#28c840" }} />
           <span className="ml-3 text-[11px] font-mono text-gray-600 select-none tracking-wide">
-            portfolio — zsh — 80×24
+            welcome — to my — portfolio
           </span>
         </div>
 

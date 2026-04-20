@@ -15,7 +15,7 @@ import logo from "../../assets/logo-dark.png";
 */
 
 const SECTION_START = 620;  // px — approx where the black section begins (after hero profile card)
-const HIDE_AFTER    = 1800; // px — start smart-hide beyond this point
+const HIDE_AFTER    = 2600; // px — start smart-hide beyond this point
 
 export default function Header() {
   const [visible,   setVisible]   = useState(false); // pill visible at all?

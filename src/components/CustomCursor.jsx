@@ -7,13 +7,12 @@ export default function CustomCursor() {
 
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) return;
-    const cursor = cursorRef.current;
+    const cursor = cursorRef.current; 
 
-    // Center the cursor perfectly using GSAP's xPercent/yPercent 
-    // instead of CSS translate, which prevents animation glitches.
+    document.documentElement.style.cursor = "none";    
+    
     gsap.set(cursor, { xPercent: -50, yPercent: -50 });
 
-    /* Move */
     const moveCursor = (e) => {
       gsap.to(cursor, { 
         x: e.clientX, 
@@ -33,7 +32,6 @@ export default function CustomCursor() {
       WebkitBackdropFilter: "blur(6px) brightness(1.1)",
       duration: 0.3, 
       ease: "power3.out",
-      "pointer-events": "none",
     });
 
     /* Leave state (Default small pointer) */
@@ -51,10 +49,13 @@ export default function CustomCursor() {
     const attach = (el) => {
       el.addEventListener("mouseenter", enter);
       el.addEventListener("mouseleave", leave);
+      el.style.cursor = "none";
+
     };
     const detach = (el) => {
       el.removeEventListener("mouseenter", enter);
       el.removeEventListener("mouseleave", leave);
+      el.style.cursor = "";
     };
 
     /* Selector covers ALL interactive elements */

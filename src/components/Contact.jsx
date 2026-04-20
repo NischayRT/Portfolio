@@ -84,8 +84,8 @@ export default function Contact() {
             <div className="flex flex-col gap-5">
               {[
                 { label: "nischayreddy.dev", href: "mailto:nischayreddy.t@gmail.com" },
-                { label: "LinkedIn", href: "https://linkedin.com" },
-                { label: "GitHub", href: "https://github.com" },
+                { label: "LinkedIn", href: "https://linkedin.com/in/nischayrt" },
+                { label: "GitHub", href: "https://github.com/NischayRT" },
               ].map(({ label, href }) => (
                 <a
                   key={label}

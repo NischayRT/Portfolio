@@ -115,7 +115,7 @@ export default function SkillsSection() {
                   return (
                     <div
                       key={skill.name}
-                      className="interactive-element group flex aspect-square cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border border-white/5 bg-white/[0.02] transition-all duration-300 hover:scale-105 hover:border-white/20 hover:bg-white/10 hover:shadow-lg"
+                      className="interactive-element group flex aspect-square flex-col items-center justify-center gap-3 rounded-2xl border border-white/5 bg-white/[0.02] transition-all duration-300 hover:scale-105 hover:border-white/20 hover:bg-white/10 hover:shadow-lg"
                       onMouseEnter={() => setHovered(skill)}
                       onMouseLeave={() => setHovered(null)}
                     >

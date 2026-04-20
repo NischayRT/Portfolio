@@ -42,8 +42,7 @@ export default function ExperienceSection() {
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           {EXPERIENCE_DATA.map((exp, i) => (
             <div key={i} className="ex-row"
-              style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", padding: "1.75rem 0",
-                cursor: "default" }}
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", padding: "1.75rem 0"}}
               onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.012)"}
               onMouseLeave={e => e.currentTarget.style.background = "transparent"}
             >
