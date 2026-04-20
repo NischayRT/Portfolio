@@ -7,18 +7,20 @@ export default function AnimatedBackground({
   animationStyle = "animate-blob" 
 }) {
   return (
-    // 'fixed inset-0' keeps the background locked to the viewport behind your scrolling content
-    <div className="fixed inset-0 w-full h-full overflow-hidden bg-[#080d14] -z-10">
+    // Changed h-full to min-h-[100dvh] to prevent layout jumping when mobile address bar hides/shows
+    <div className="fixed inset-0 w-full min-h-[100dvh] overflow-hidden bg-[#080d14] -z-10">
       
-      {/* Layer 1: The Animated Gradient Blobs */}
+      {/* Layer 1: The Animated Gradient Blobs 
+          Added 'will-change-transform' and 'transform-gpu' to force hardware acceleration 
+      */}
       <div 
-        className={`absolute top-[-10%] left-[-10%] h-[50vw] w-screen ${animationStyle} rounded-full ${colors[0]} opacity-60 mix-blend-screen blur-[80px] transition-colors duration-1000 ease-in-out`} 
+        className={`absolute top-[-10%] left-[-10%] h-[50vw] w-screen ${animationStyle} rounded-full ${colors[0]} opacity-60 mix-blend-screen blur-[80px] transition-colors duration-1000 ease-in-out will-change-transform transform-gpu`} 
       />
       <div 
-        className={`absolute right-[-10%] top-[10%] h-[45vw] w-[45vw] ${animationStyle} rounded-full ${colors[1]} opacity-50 mix-blend-screen blur-[80px] animation-delay-2000 transition-colors duration-1000 ease-in-out`} 
+        className={`absolute right-[-10%] top-[10%] h-[45vw] w-[45vw] ${animationStyle} rounded-full ${colors[1]} opacity-50 mix-blend-screen blur-[80px] animation-delay-2000 transition-colors duration-1000 ease-in-out will-change-transform transform-gpu`} 
       />
       <div 
-        className={`absolute bottom-[-25%] left-[32%] h-[60vw] w-[90vw] ${animationStyle} rounded-full ${colors[2]} opacity-60 mix-blend-screen blur-[80px] animation-delay-4000 transition-colors duration-1000 ease-in-out`} 
+        className={`absolute bottom-[-25%] left-[32%] h-[60vw] w-[90vw] ${animationStyle} rounded-full ${colors[2]} opacity-60 mix-blend-screen blur-[80px] animation-delay-4000 transition-colors duration-1000 ease-in-out will-change-transform transform-gpu`} 
       />
 
       {/* Layer 2: The Grainy Noise Overlay */}
@@ -31,27 +33,25 @@ export default function AnimatedBackground({
 
       {/* CSS Animations */}
       <style jsx>{`
-        /* Animation 1: Standard subtle float */
+        /* Changed translate to translate3d to force GPU rendering and prevent mobile tearing */
         @keyframes blob {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(50px, -50px) scale(1.1); }
-          66% { transform: translate(-40px, 40px) scale(0.9); }
-          100% { transform: translate(0px, 0px) scale(1); }
+          0% { transform: translate3d(0px, 0px, 0) scale(1); }
+          33% { transform: translate3d(50px, -50px, 0) scale(1.1); }
+          66% { transform: translate3d(-40px, 40px, 0) scale(0.9); }
+          100% { transform: translate3d(0px, 0px, 0) scale(1); }
         }
         
-        /* Animation 2: Wide sweeping movements */
         @keyframes blob-wide {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(150px, -100px) scale(1.2); }
-          66% { transform: translate(-100px, 100px) scale(0.8); }
-          100% { transform: translate(0px, 0px) scale(1); }
+          0% { transform: translate3d(0px, 0px, 0) scale(1); }
+          33% { transform: translate3d(150px, -100px, 0) scale(1.2); }
+          66% { transform: translate3d(-100px, 100px, 0) scale(0.8); }
+          100% { transform: translate3d(0px, 0px, 0) scale(1); }
         }
 
-        /* Animation 3: Circular spinning logic */
         @keyframes blob-spin {
-          0% { transform: rotate(0deg) translate(50px) rotate(0deg) scale(1); }
-          50% { transform: rotate(180deg) translate(80px) rotate(-180deg) scale(1.1); }
-          100% { transform: rotate(360deg) translate(50px) rotate(-360deg) scale(1); }
+          0% { transform: rotate(0deg) translate3d(50px, 0, 0) rotate(0deg) scale(1); }
+          50% { transform: rotate(180deg) translate3d(80px, 0, 0) rotate(-180deg) scale(1.1); }
+          100% { transform: rotate(360deg) translate3d(50px, 0, 0) rotate(-360deg) scale(1); }
         }
 
         .animate-blob { animation: blob 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
