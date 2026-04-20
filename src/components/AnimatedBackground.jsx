@@ -12,7 +12,7 @@ export default function AnimatedBackground({
       
       {/* Layer 1: The Animated Gradient Blobs */}
       <div 
-        className={`absolute top-[-10%] left-[-10%] h-[50vw] w-[50vw] ${animationStyle} rounded-full ${colors[0]} opacity-60 mix-blend-screen blur-[80px] transition-colors duration-1000 ease-in-out`} 
+        className={`absolute top-[-10%] left-[-10%] h-[50vw] w-screen ${animationStyle} rounded-full ${colors[0]} opacity-60 mix-blend-screen blur-[80px] transition-colors duration-1000 ease-in-out`} 
       />
       <div 
         className={`absolute right-[-10%] top-[10%] h-[45vw] w-[45vw] ${animationStyle} rounded-full ${colors[1]} opacity-50 mix-blend-screen blur-[80px] animation-delay-2000 transition-colors duration-1000 ease-in-out`} 
