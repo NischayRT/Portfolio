@@ -20,7 +20,7 @@ export default function AnimatedBackground({
         className={`absolute right-[-10%] top-[10%] h-[45vw] w-[45vw] ${animationStyle} rounded-full ${colors[1]} opacity-50 mix-blend-screen blur-[80px] animation-delay-2000 transition-colors duration-1000 ease-in-out will-change-transform transform-gpu`} 
       />
       <div 
-        className={`absolute bottom-[-25%] left-[32%] h-[60vw] w-[90vw] ${animationStyle} rounded-full ${colors[2]} opacity-60 mix-blend-screen blur-[80px] animation-delay-4000 transition-colors duration-1000 ease-in-out will-change-transform transform-gpu`} 
+        className={`absolute bottom-[-25%] left-[25%] h-[60vw] w-[80vw] ${animationStyle} rounded-full ${colors[2]} opacity-60 mix-blend-screen blur-[80px] animation-delay-4000 transition-colors duration-1000 ease-in-out will-change-transform transform-gpu`} 
       />
 
       {/* Layer 2: The Grainy Noise Overlay */}
