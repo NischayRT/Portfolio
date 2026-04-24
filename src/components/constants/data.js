@@ -149,7 +149,7 @@ export const SKILLS_DATA = [
 export const EXPERIENCE_DATA = [
   {
     company: "8 Views",
-    role: "Full Stack Developer Intern",
+    role: "UI/UX Developer Intern",
     date: "<div>Oct 2025</div> <div style='display: flex;height: 10px;justify-content: center;align-items: center;'> - </div> Feb 2026",
     location: "Madhapur",
     description: [
